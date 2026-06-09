@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA Glossary — Quick Reference</title>
+  <style>
+    :root {
+      --bg: #fafaf8; --surface: #fff; --border: #e5e5e0;
+      --text: #1a1a1a; --muted: #6b6b6b; --accent: #2563eb;
+      --accent-light: #eff6ff; --radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 2rem 1rem; font-size: 0.92rem; }
+    .page { max-width: 960px; margin: 0 auto; }
+    h1 { font-size: 1.6rem; margin-bottom: 0.3rem; }
+    .tagline { color: var(--muted); font-style: italic; margin-bottom: 2rem; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); background: var(--accent-light); padding: 0.3rem 0.7rem; border-radius: 4px; display: inline-block; margin: 1.75rem 0 0.75rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.75rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1.1rem; }
+    .term { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .def { color: var(--muted); line-height: 1.5; }
+    @media print { body { background: #fff; } }
+  </style>
+</head>
+<body>
+<div class="page">
+  <h1>QA Glossary</h1>
+  <p class="tagline">Quick reference — every term you need for a Junior QA interview.</p>
+
+  <h2>Core Concepts</h2>
+  <div class="grid">
+    <div class="card"><div class="term">Quality Assurance (QA)</div><div class="def">Process-focused, proactive. Sets standards and processes to prevent defects from occurring.</div></div>
+    <div class="card"><div class="term">Quality Control (QC)</div><div class="def">Product-focused, reactive. Checks outputs against standards to detect defects.</div></div>
+    <div class="card"><div class="term">Testing</div><div class="def">A specific QC activity: executing software to find defects.</div></div>
+    <div class="card"><div class="term">Defect / Bug</div><div class="def">A deviation between actual and expected software behaviour.</div></div>
+    <div class="card"><div class="term">Verification</div><div class="def">"Are we building the product right?" — checking against specifications.</div></div>
+    <div class="card"><div class="term">Validation</div><div class="def">"Are we building the right product?" — checking against user needs.</div></div>
+  </div>
+
+  <h2>SDLC &amp; STLC</h2>
+  <div class="grid">
+    <div class="card"><div class="term">SDLC</div><div class="def">Software Development Lifecycle — the end-to-end process of building software: Requirements → Design → Dev → Test → Deploy → Maintain.</div></div>
+    <div class="card"><div class="term">STLC</div><div class="def">Software Testing Lifecycle — QA's own process within SDLC: Requirement Analysis → Test Planning → Test Case Dev → Env Setup → Execution → Closure.</div></div>
+    <div class="card"><div class="term">UAT</div><div class="def">User Acceptance Testing — final testing by business users before release.</div></div>
+    <div class="card"><div class="term">Shift-Left</div><div class="def">Testing earlier in the SDLC to catch defects before they become expensive to fix.</div></div>
+  </div>
+
+  <h2>Testing Types</h2>
+  <div class="grid">
+    <div class="card"><div class="term">Functional Testing</div><div class="def">Does the software do what it should? Checks behaviour against requirements.</div></div>
+    <div class="card"><div class="term">Non-Functional Testing</div><div class="def">Does it do it well enough? Covers performance, security, usability, accessibility.</div></div>
+    <div class="card"><div class="term">Smoke Testing</div><div class="def">Broad, shallow — "is the build alive?" Quick check of critical paths after a new build.</div></div>
+    <div class="card"><div class="term">Sanity Testing</div><div class="def">Narrow, deep — checks a specific fix works and hasn't broken related functionality.</div></div>
+    <div class="card"><div class="term">Regression Testing</div><div class="def">Re-testing existing features after a code change to ensure nothing broke.</div></div>
+    <div class="card"><div class="term">Exploratory Testing</div><div class="def">Unscripted testing guided by tester intuition and curiosity to find unexpected bugs.</div></div>
+    <div class="card"><div class="term">Re-testing</div><div class="def">Re-running the exact steps of a bug after it's been fixed to confirm the fix works.</div></div>
+  </div>
+
+  <h2>Test Design</h2>
+  <div class="grid">
+    <div class="card"><div class="term">Equivalence Partitioning (EP)</div><div class="def">Divides inputs into groups that behave the same. Test one value per group.</div></div>
+    <div class="card"><div class="term">Boundary Value Analysis (BVA)</div><div class="def">Tests values at, just below, and just above the boundaries of valid input ranges.</div></div>
+    <div class="card"><div class="term">Decision Table</div><div class="def">Maps all combinations of conditions to expected outcomes. Ensures full combination coverage.</div></div>
+    <div class="card"><div class="term">State Transition</div><div class="def">Tests valid and invalid transitions between system states.</div></div>
+    <div class="card"><div class="term">Error Guessing</div><div class="def">Using experience to target where bugs are most likely — empty fields, boundaries, special chars.</div></div>
+    <div class="card"><div class="term">Positive Testing</div><div class="def">Tests the happy path — valid inputs, expected user behaviour.</div></div>
+    <div class="card"><div class="term">Negative Testing</div><div class="def">Tests what happens with invalid inputs or unexpected user behaviour.</div></div>
+  </div>
+
+  <h2>Test Artifacts</h2>
+  <div class="grid">
+    <div class="card"><div class="term">Test Plan</div><div class="def">Document describing scope, approach, resources, timeline, and risks for a testing effort.</div></div>
+    <div class="card"><div class="term">Test Case</div><div class="def">Documented steps with preconditions, test data, and expected result to verify one behaviour.</div></div>
+    <div class="card"><div class="term">Test Suite</div><div class="def">A collection of related test cases.</div></div>
+    <div class="card"><div class="term">Test Execution Log</div><div class="def">Record of which tests were run, when, and what results were observed.</div></div>
+    <div class="card"><div class="term">Bug Report / Defect Report</div><div class="def">Documentation of a defect: steps to reproduce, actual vs expected result, severity, priority.</div></div>
+    <div class="card"><div class="term">Test Summary Report</div><div class="def">End-of-cycle document summarising what was tested, pass/fail counts, and outstanding issues.</div></div>
+  </div>
+
+  <h2>Bug Life Cycle</h2>
+  <div class="grid">
+    <div class="card"><div class="term">New</div><div class="def">Bug just reported, not yet reviewed.</div></div>
+    <div class="card"><div class="term">Assigned</div><div class="def">Bug confirmed and assigned to a developer.</div></div>
+    <div class="card"><div class="term">Open / In Progress</div><div class="def">Developer is working on the fix.</div></div>
+    <div class="card"><div class="term">Fixed / Resolved</div><div class="def">Developer believes the bug is fixed. Ready for QA re-test.</div></div>
+    <div class="card"><div class="term">Retest</div><div class="def">QA is re-testing the fix.</div></div>
+    <div class="card"><div class="term">Closed</div><div class="def">Fix verified — bug no longer exists.</div></div>
+    <div class="card"><div class="term">Reopened</div><div class="def">Fix didn't work — bug exists again.</div></div>
+    <div class="card"><div class="term">Rejected / Not a Bug</div><div class="def">Developer/PM confirms this is expected behaviour, not a defect.</div></div>
+    <div class="card"><div class="term">Deferred</div><div class="def">Valid bug but won't be fixed in this release.</div></div>
+    <div class="card"><div class="term">Severity</div><div class="def">How bad the impact of the bug is (Critical, Major, Minor, Trivial).</div></div>
+    <div class="card"><div class="term">Priority</div><div class="def">How urgently the bug needs to be fixed (High, Medium, Low) — a business decision.</div></div>
+  </div>
+
+  <h2>Agile &amp; Scrum</h2>
+  <div class="grid">
+    <div class="card"><div class="term">Sprint</div><div class="def">A fixed time-box (usually 2 weeks) in which a team delivers a working increment of software.</div></div>
+    <div class="card"><div class="term">User Story</div><div class="def">A requirement written from the user's perspective: "As a [user], I want [feature] so that [benefit]."</div></div>
+    <div class="card"><div class="term">Acceptance Criteria</div><div class="def">The conditions a user story must meet to be considered complete — QA's test checklist.</div></div>
+    <div class="card"><div class="term">Sprint Planning</div><div class="def">Meeting where the team selects and commits to work for the upcoming sprint.</div></div>
+    <div class="card"><div class="term">Daily Standup</div><div class="def">15-min daily sync: what did I do yesterday, what will I do today, any blockers?</div></div>
+    <div class="card"><div class="term">Sprint Review</div><div class="def">Demo of completed work to stakeholders at end of sprint.</div></div>
+    <div class="card"><div class="term">Retrospective</div><div class="def">Team reflects on what went well, what didn't, and what to improve next sprint.</div></div>
+    <div class="card"><div class="term">Definition of Done (DoD)</div><div class="def">Agreed checklist — what "done" means for every story (includes QA sign-off).</div></div>
+  </div>
+
+  <h2>API Testing</h2>
+  <div class="grid">
+    <div class="card"><div class="term">API</div><div class="def">Application Programming Interface — a contract between software components. REST APIs send/receive data via HTTP.</div></div>
+    <div class="card"><div class="term">GET</div><div class="def">HTTP method to retrieve data. Should never change data on the server.</div></div>
+    <div class="card"><div class="term">POST</div><div class="def">HTTP method to create new data.</div></div>
+    <div class="card"><div class="term">PUT / PATCH</div><div class="def">Update existing data. PUT replaces fully; PATCH updates partially.</div></div>
+    <div class="card"><div class="term">DELETE</div><div class="def">HTTP method to delete data.</div></div>
+    <div class="card"><div class="term">200 OK</div><div class="def">Request succeeded.</div></div>
+    <div class="card"><div class="term">201 Created</div><div class="def">Resource successfully created (POST).</div></div>
+    <div class="card"><div class="term">400 Bad Request</div><div class="def">The request was malformed — client error.</div></div>
+    <div class="card"><div class="term">401 Unauthorized</div><div class="def">Authentication required or failed.</div></div>
+    <div class="card"><div class="term">403 Forbidden</div><div class="def">Authenticated but not permitted to access this resource.</div></div>
+    <div class="card"><div class="term">404 Not Found</div><div class="def">The requested resource does not exist.</div></div>
+    <div class="card"><div class="term">500 Internal Server Error</div><div class="def">The server crashed or encountered an unexpected error.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
