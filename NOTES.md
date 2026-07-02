@@ -26,6 +26,17 @@ This is the core teaching advantage. Always show the parallel:
 - Ward audit → QA audit / test coverage review
 - "Expected vs actual patient outcome" → "expected vs actual result" in a test case
 
+## Real Tools Setup (by Khushal)
+
+- **OWASP Juice Shop**: `http://192.168.0.202:9058` — the practice app for all testing
+- **YouTrack**: `https://youtrack.kkunraid.com` — Shivani login: sbhatt / AqcJUm4rzpfjcB
+  - Project: "Juice Shop Testing" (OJS prefix)
+  - Agile Board: To Do → In Progress → Ready for Review → Ready for Testing → Verified → Blocked → To Release
+  - Test Manager: "OWASP Juice Shop" repository already created
+  - Existing stories: OJS-4 (Registration), OJS-5 (Search), OJS-6 (Add to Basket)
+
+All lessons from Lesson 02 onwards should use these tools. Test cases go into YouTrack. Bugs raised as YouTrack issues.
+
 ## Curriculum Progress
 
 - [ ] Lesson 01: What QA Is — and Why Your Healthcare Background Makes You a Natural
