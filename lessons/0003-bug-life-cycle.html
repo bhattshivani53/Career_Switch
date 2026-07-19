@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 03 — The Bug Life Cycle</title>
+  <style>
+    :root {
+      --bg: #fafaf8; --surface: #fff; --border: #e5e5e0;
+      --text: #1a1a1a; --muted: #6b6b6b; --accent: #2563eb;
+      --accent-light: #eff6ff; --green: #16a34a; --green-light: #f0fdf4;
+      --amber: #d97706; --amber-light: #fffbeb; --red: #dc2626;
+      --red-light: #fef2f2; --purple: #7c3aed; --purple-light: #f5f3ff;
+      --orange: #ea580c; --orange-light: #fff7ed;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); line-height: 1.75; padding: 2rem 1rem; }
+    .page { max-width: 760px; margin: 0 auto; }
+
+    .lesson-header { border-bottom: 2px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2.5rem; }
+    .lesson-tag { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent-light); display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.75rem; }
+    h1 { font-size: 1.9rem; line-height: 1.2; margin-bottom: 0.5rem; }
+    .subtitle { font-size: 1.05rem; color: var(--muted); font-style: italic; }
+    .meta { display: flex; gap: 1.5rem; margin-top: 1rem; font-family: sans-serif; font-size: 0.82rem; color: var(--muted); flex-wrap: wrap; }
+
+    h2 { font-size: 1.3rem; margin: 2.5rem 0 0.75rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1rem; margin: 1.5rem 0 0.4rem; color: var(--accent); font-family: sans-serif; font-weight: 700; }
+    p { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; }
+    code { font-family: 'Courier New', monospace; background: #f0f0ed; padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.88em; }
+
+    .callout { border-left: 4px solid; padding: 1rem 1.25rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.5rem 0; }
+    .callout-title { font-family: sans-serif; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+    .callout.analogy { border-color: var(--green); background: var(--green-light); }
+    .callout.analogy .callout-title { color: var(--green); }
+    .callout.insight { border-color: var(--accent); background: var(--accent-light); }
+    .callout.insight .callout-title { color: var(--accent); }
+    .callout.interview { border-color: var(--amber); background: var(--amber-light); }
+    .callout.interview .callout-title { color: var(--amber); }
+    .callout.tool { border-color: var(--purple); background: var(--purple-light); }
+    .callout.tool .callout-title { color: var(--purple); }
+    .callout.warning { border-color: var(--red); background: var(--red-light); }
+    .callout.warning .callout-title { color: var(--red); }
+
+    table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+    th { background: var(--text); color: #fff; text-align: left; padding: 0.65rem 0.9rem; font-family: sans-serif; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:nth-child(even) td { background: #f5f5f3; }
+    tr:last-child td { border-bottom: none; }
+
+    /* Bug lifecycle flow */
+    .lifecycle { display: flex; flex-wrap: wrap; gap: 0; margin: 1.5rem 0; }
+    .lc-state { flex: 1; min-width: 110px; padding: 0.75rem 0.6rem; text-align: center; border: 2px solid var(--border); border-right: none; position: relative; background: var(--surface); }
+    .lc-state:last-child { border-right: 2px solid var(--border); }
+    .lc-state::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: var(--muted); z-index: 1; }
+    .lc-state:last-child::after { content: ''; }
+    .lc-dot { width: 12px; height: 12px; border-radius: 50%; margin: 0 auto 0.4rem; }
+    .lc-name { font-family: sans-serif; font-size: 0.78rem; font-weight: 700; }
+    .lc-who { font-family: sans-serif; font-size: 0.68rem; color: var(--muted); margin-top: 0.2rem; }
+    .new { background: #e5e7eb; } .assigned { background: #bfdbfe; } .open { background: #fde68a; }
+    .fixed { background: #bbf7d0; } .retest { background: #c4b5fd; } .verified { background: #a7f3d0; }
+    .closed { background: #6ee7b7; } .reopened { background: #fca5a5; }
+
+    /* Bug report card */
+    .bug-card { border: 2px solid var(--red); border-radius: var(--radius); overflow: hidden; margin: 1.5rem 0; }
+    .bug-header { background: var(--red); color: #fff; padding: 0.75rem 1.1rem; font-family: sans-serif; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .bug-id { font-family: 'Courier New', monospace; font-size: 0.88rem; }
+    .severity-badge { font-size: 0.72rem; padding: 0.2rem 0.6rem; border-radius: 3px; font-weight: 700; border: 1px solid rgba(255,255,255,0.4); }
+    .bug-body {}
+    .bug-row { display: grid; grid-template-columns: 160px 1fr; border-bottom: 1px solid var(--border); }
+    .bug-row:last-child { border-bottom: none; }
+    .bug-label { background: #fef2f2; padding: 0.6rem 1rem; font-family: sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--red); border-right: 1px solid #fecaca; }
+    .bug-value { padding: 0.6rem 1rem; font-size: 0.9rem; }
+    .bug-value ol { margin: 0; padding-left: 1.3rem; }
+    .bug-value ol li { margin-bottom: 0.25rem; font-size: 0.88rem; }
+
+    /* Severity vs Priority matrix */
+    .matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+    .matrix-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+    .matrix-card h3 { margin-top: 0; }
+    .matrix-example { font-family: sans-serif; font-size: 0.82rem; color: var(--muted); margin-top: 0.5rem; background: #f5f5f3; padding: 0.4rem 0.6rem; border-radius: 4px; }
+
+    /* Exercise */
+    .exercise { background: #1a1a1a; color: #e5e5e0; border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .exercise h2 { color: #fff; border-color: #444; font-size: 1.05rem; }
+    .exercise p, .exercise li { color: #ccc; font-size: 0.92rem; }
+    .exercise strong { color: #fff; }
+    .task-label { font-family: 'Courier New', monospace; font-size: 0.78rem; background: #333; color: #7dd3fc; padding: 0.15rem 0.5rem; border-radius: 3px; display: inline-block; margin: 0.75rem 0 0.4rem; }
+    .url-chip { display: inline-block; background: #111; color: #7dd3fc; font-family: 'Courier New', monospace; font-size: 0.82rem; padding: 0.25rem 0.6rem; border-radius: 4px; border: 1px solid #333; }
+
+    /* Quiz */
+    .quiz { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .quiz h2 { border: none; margin-top: 0; font-size: 1.05rem; }
+    .question { margin-bottom: 1.5rem; }
+    .question p { font-weight: 700; margin-bottom: 0.6rem; font-size: 0.95rem; }
+    .options label { display: block; padding: 0.5rem 0.85rem; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 0.35rem; cursor: pointer; font-family: sans-serif; font-size: 0.9rem; transition: background 0.15s; }
+    .options label:hover { background: var(--accent-light); border-color: var(--accent); }
+    .options input { margin-right: 0.5rem; }
+    .options label.correct { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 700; }
+    .options label.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+    .btn { font-family: sans-serif; font-size: 0.9rem; font-weight: 700; background: var(--accent); color: #fff; border: none; padding: 0.65rem 1.4rem; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #1d4ed8; }
+    .quiz-result { display: none; margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-family: sans-serif; font-weight: 700; }
+    .quiz-result.pass { background: var(--green-light); color: var(--green); }
+    .quiz-result.fail { background: var(--red-light); color: var(--red); }
+
+    .lesson-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 2px solid var(--border); font-family: sans-serif; font-size: 0.85rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header class="lesson-header">
+    <div class="lesson-tag">Lesson 03 of 12 &nbsp;·&nbsp; Bug Life Cycle</div>
+    <h1>The Bug Life Cycle — and Your First Real Bug Report</h1>
+    <p class="subtitle">How a bug is born, tracked, fixed, verified, and closed — and how to write one that developers actually act on.</p>
+    <div class="meta">
+      <span>⏱ 35–45 minutes</span>
+      <span>🛠 Tools: Juice Shop + YouTrack Issues</span>
+      <span>🐛 You will find and raise a real bug today</span>
+    </div>
+  </header>
+
+  <!-- Section 1 -->
+  <h2>1. What is a Bug?</h2>
+
+  <p>A <strong>bug (defect)</strong> is when software behaves differently from how it is supposed to behave — based on requirements, design, or common sense.</p>
+
+  <p>Three types of difference matter:</p>
+  <ul>
+    <li><strong>Functional defect</strong> — the feature does the wrong thing (wrong calculation, wrong navigation, data not saved)</li>
+    <li><strong>UI defect</strong> — the interface looks wrong (broken layout, wrong text, element in wrong position)</li>
+    <li><strong>Performance defect</strong> — the feature does the right thing but too slowly</li>
+  </ul>
+
+  <div class="callout analogy">
+    <div class="callout-title">Healthcare Parallel</div>
+    <p>A bug is like an <strong>adverse event report</strong> in healthcare. Something happened that shouldn't have (or didn't happen that should have). You document exactly what occurred, the conditions under which it happened, and the impact — so it can be investigated, fixed, and verified.</p>
+    <p style="margin:0">The discipline is the same: accurate observation + clear documentation + escalation to the right person.</p>
+  </div>
+
+  <!-- Section 2 -->
+  <h2>2. The Bug Life Cycle</h2>
+
+  <p>Every bug goes through a set of states from discovery to closure. Understanding this is essential — you will be managing bugs in YouTrack from day one.</p>
+
+  <div class="lifecycle">
+    <div class="lc-state"><div class="lc-dot new"></div><div class="lc-name">New</div><div class="lc-who">QA raises it</div></div>
+    <div class="lc-state"><div class="lc-dot assigned"></div><div class="lc-name">Assigned</div><div class="lc-who">PM/Lead assigns</div></div>
+    <div class="lc-state"><div class="lc-dot open"></div><div class="lc-name">In Progress</div><div class="lc-who">Dev fixes it</div></div>
+    <div class="lc-state"><div class="lc-dot fixed"></div><div class="lc-name">Fixed</div><div class="lc-who">Dev marks done</div></div>
+    <div class="lc-state"><div class="lc-dot retest"></div><div class="lc-name">Retest</div><div class="lc-who">QA re-tests</div></div>
+    <div class="lc-state"><div class="lc-dot closed"></div><div class="lc-name">Closed</div><div class="lc-who">QA confirms</div></div>
+  </div>
+
+  <p>But the cycle isn't always linear. Here are the important branch states:</p>
+
+  <table>
+    <thead><tr><th>State</th><th>Who sets it</th><th>What it means</th></tr></thead>
+    <tbody>
+      <tr><td><strong>New</strong></td><td>QA</td><td>Just raised — not yet reviewed by the team</td></tr>
+      <tr><td><strong>Assigned</strong></td><td>PM / Tech Lead</td><td>Confirmed as a real bug, given to a developer to fix</td></tr>
+      <tr><td><strong>In Progress / Open</strong></td><td>Developer</td><td>Developer is actively working on the fix</td></tr>
+      <tr><td><strong>Fixed / Resolved</strong></td><td>Developer</td><td>Developer believes it's fixed — back to QA to verify</td></tr>
+      <tr><td><strong>Retest</strong></td><td>QA</td><td>QA is re-running the original steps to confirm fix</td></tr>
+      <tr><td><strong>Verified / Closed</strong></td><td>QA</td><td>Fix confirmed — bug no longer exists</td></tr>
+      <tr><td><strong>Reopened</strong></td><td>QA</td><td>Fix did not work — bug is back. Goes to Assigned again</td></tr>
+      <tr><td><strong>Rejected / Not a Bug</strong></td><td>Dev / PM</td><td>Behaviour is intentional or by design — not a defect</td></tr>
+      <tr><td><strong>Deferred</strong></td><td>PM</td><td>Real bug but won't be fixed this release — logged for later</td></tr>
+      <tr><td><strong>Duplicate</strong></td><td>Dev / Lead</td><td>Same bug already raised by someone else</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout insight">
+    <div class="callout-title">The QA's Core Responsibility in the Bug Cycle</div>
+    <p>You are responsible for <strong>New → Retest → Closed/Reopened</strong>. You raise the bug, you re-test after the fix, and you make the final call on whether it's fixed. The developer does not close their own bugs — QA does.</p>
+  </div>
+
+  <!-- Section 3 -->
+  <h2>3. Severity vs Priority — The Difference That Trips Everyone Up</h2>
+
+  <p>This comes up in almost every QA interview. They are two completely different dimensions.</p>
+
+  <div class="matrix">
+    <div class="matrix-card">
+      <h3 style="color:var(--red)">Severity</h3>
+      <p style="font-size:0.92rem">How <strong>bad</strong> is the technical impact?<br>Set by: <strong>QA</strong></p>
+      <ul style="font-size:0.88rem">
+        <li><strong>Critical</strong> — System crash, data loss, security breach, complete feature broken</li>
+        <li><strong>Major</strong> — Core feature partially broken, no workaround</li>
+        <li><strong>Minor</strong> — Feature partially broken but workaround exists</li>
+        <li><strong>Trivial</strong> — Cosmetic issue — typo, colour off, icon wrong</li>
+      </ul>
+    </div>
+    <div class="matrix-card">
+      <h3 style="color:var(--amber)">Priority</h3>
+      <p style="font-size:0.92rem">How <strong>urgently</strong> must it be fixed?<br>Set by: <strong>Product Manager</strong></p>
+      <ul style="font-size:0.88rem">
+        <li><strong>High</strong> — Must be fixed before release / immediately</li>
+        <li><strong>Medium</strong> — Fix in current or next sprint</li>
+        <li><strong>Low</strong> — Fix when time allows</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>The trick: <strong>severity and priority can go in opposite directions.</strong></p>
+
+  <table>
+    <thead><tr><th>Scenario</th><th>Severity</th><th>Priority</th><th>Why?</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>The CEO's name is spelled wrong on the homepage</td>
+        <td>Trivial</td>
+        <td><strong>High</strong></td>
+        <td>Low technical impact, but politically urgent to fix immediately</td>
+      </tr>
+      <tr>
+        <td>A crash occurs only when a user selects a currency no one uses</td>
+        <td><strong>Critical</strong></td>
+        <td>Low</td>
+        <td>Severe when it happens, but almost no users trigger it</td>
+      </tr>
+      <tr>
+        <td>Login page is completely broken</td>
+        <td><strong>Critical</strong></td>
+        <td><strong>High</strong></td>
+        <td>Both — blocks all users, must be fixed immediately</td>
+      </tr>
+      <tr>
+        <td>A minor UI misalignment on the about page</td>
+        <td>Trivial</td>
+        <td>Low</td>
+        <td>Both — barely anyone sees it, low urgency</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout interview">
+    <div class="callout-title">Interview Answer</div>
+    <p><em>"Severity is a technical measure of how bad the bug's impact is — set by QA. Priority is a business decision about how urgently it needs to be fixed — set by the product manager. They're independent: a trivial typo on the CEO's bio page might be Priority High even though it's Severity Trivial, because the business needs it fixed before the press launch."</em></p>
+  </div>
+
+  <!-- Section 4 -->
+  <h2>4. Anatomy of a Professional Bug Report</h2>
+
+  <p>A bug report is only useful if a developer can <strong>reproduce it</strong>. If they can't reproduce it, they can't fix it. Your job is to give them everything they need.</p>
+
+  <p>Here is a real example — a bug you can find in the Juice Shop right now:</p>
+
+  <div class="bug-card">
+    <div class="bug-header">
+      <span class="bug-id">BUG_LOGIN_001</span>
+      <span>Login — Security</span>
+      <span class="severity-badge">Severity: Critical</span>
+    </div>
+    <div class="bug-body">
+      <div class="bug-row"><div class="bug-label">Title</div><div class="bug-value">Application allows login with SQL injection in the email field, bypassing authentication entirely</div></div>
+      <div class="bug-row"><div class="bug-label">Environment</div><div class="bug-value">OWASP Juice Shop · http://192.168.0.202:9058 · Chrome 126 · macOS</div></div>
+      <div class="bug-row"><div class="bug-label">Steps to Reproduce</div><div class="bug-value"><ol>
+        <li>Navigate to <code>http://192.168.0.202:9058/#/login</code></li>
+        <li>Enter <code>' OR 1=1--</code> in the Email field</li>
+        <li>Enter anything in the Password field (e.g. <code>abc</code>)</li>
+        <li>Click the "Log In" button</li>
+      </ol></div></div>
+      <div class="bug-row"><div class="bug-label">Expected Result</div><div class="bug-value">Login fails. An error message is displayed: "Invalid email or password." No account is accessed.</div></div>
+      <div class="bug-row"><div class="bug-label">Actual Result</div><div class="bug-value">User is logged in as <strong>admin@juice-sh.op</strong> without providing a valid password. Full admin account access is granted.</div></div>
+      <div class="bug-row"><div class="bug-label">Severity</div><div class="bug-value">Critical — authentication is completely bypassed; any attacker can access any account</div></div>
+      <div class="bug-row"><div class="bug-label">Priority</div><div class="bug-value">High — must be fixed immediately before any production deployment</div></div>
+      <div class="bug-row"><div class="bug-label">Attachments</div><div class="bug-value">Screenshot showing admin@juice-sh.op logged in after SQL injection input</div></div>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">Important Context</div>
+    <p>The Juice Shop is <em>deliberately</em> built with vulnerabilities like this — it's a training app, not a real shop. In your future job, finding a SQL injection vulnerability in a real app would be an immediate Critical/High bug that stops the release. In healthcare IT especially — SQL injection in a patient record system could expose thousands of records.</p>
+  </div>
+
+  <h3>The Seven Fields You Must Always Include</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Why it's essential</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Title</strong></td><td>Must describe the bug in one sentence — what fails, in what context</td></tr>
+      <tr><td><strong>Environment</strong></td><td>Browser, OS, app version — a bug on Chrome may not appear on Firefox</td></tr>
+      <tr><td><strong>Steps to Reproduce</strong></td><td>Numbered, exact steps — if the developer can't follow them, they can't fix it</td></tr>
+      <tr><td><strong>Expected Result</strong></td><td>What SHOULD have happened, based on requirements</td></tr>
+      <tr><td><strong>Actual Result</strong></td><td>What DID happen — be precise, not "it broke"</td></tr>
+      <tr><td><strong>Severity</strong></td><td>Your technical assessment of the impact</td></tr>
+      <tr><td><strong>Attachments</strong></td><td>Screenshot or screen recording — a picture saves 10 back-and-forth messages</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 5 -->
+  <h2>5. What Makes a Good vs Bad Bug Title</h2>
+
+  <table>
+    <thead><tr><th>Bad title</th><th>Why it's bad</th><th>Good title</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>"Login doesn't work"</td>
+        <td>No context — which login? what happens? when?</td>
+        <td>"Login fails with valid credentials when email contains uppercase letters"</td>
+      </tr>
+      <tr>
+        <td>"Registration bug"</td>
+        <td>Tells the developer nothing</td>
+        <td>"Registration form accepts duplicate email without showing an error"</td>
+      </tr>
+      <tr>
+        <td>"Error on checkout"</td>
+        <td>Which error? When exactly?</td>
+        <td>"500 Server Error displayed when user proceeds to checkout with an empty basket"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>A good bug title answers three questions in one sentence: <strong>What</strong> failed? <strong>Where</strong> (which feature)? <strong>Under what condition</strong>?</p>
+
+  <!-- Exercise -->
+  <div class="exercise">
+    <h2>Exercise — Find and Raise Your First Real Bug</h2>
+
+    <p>The Juice Shop contains many intentional bugs. Your job is to find one and raise a professional bug report in YouTrack Issues (not Test Manager — this goes in the main Issues list, on the Juice Shop Testing board).</p>
+
+    <p class="task-label">STEP 1 — FIND THE BUG</p>
+    <p>Try this on the Juice Shop login page: <span class="url-chip">http://192.168.0.202:9058/#/login</span></p>
+    <ul>
+      <li>Enter exactly this in the Email field: <code>' OR 1=1--</code></li>
+      <li>Enter anything in the Password field</li>
+      <li>Click Log In</li>
+      <li>Note what happens</li>
+    </ul>
+    <p>Then also try this on the Registration page: register with the email <code>test@test.com</code> — then try registering again with the exact same email. Does the app handle it clearly?</p>
+
+    <p class="task-label">STEP 2 — RAISE IT IN YOUTRACK</p>
+    <p>Go to <strong>YouTrack → Issues → New Issue</strong> (not Test Manager). Fill in all seven fields from Section 4:</p>
+    <ul>
+      <li><strong>Title</strong>: one sentence — what fails, where, under what condition</li>
+      <li><strong>Type</strong>: Bug</li>
+      <li><strong>Project</strong>: Juice Shop Testing</li>
+      <li><strong>Steps to Reproduce</strong>: numbered, exact</li>
+      <li><strong>Expected Result</strong>: what should happen</li>
+      <li><strong>Actual Result</strong>: what actually happened</li>
+      <li><strong>Severity</strong>: Critical / Major / Minor / Trivial</li>
+      <li><strong>Attach a screenshot</strong></li>
+    </ul>
+
+    <p class="task-label">STEP 3 — MOVE IT ON THE AGILE BOARD</p>
+    <p>Go to <strong>Agile Boards → Juice Shop Testing</strong>. Find your new bug. Drag it from "To Do" to "In Progress" (pretend you're investigating it). This is how you interact with the board as a QA.</p>
+
+    <p class="task-label">STEP 4 — SHARE WITH ME</p>
+    <p>Send a screenshot of your bug in YouTrack Issues. I'll review the title, steps, severity, and whether the expected/actual results are clear. That's your feedback loop before Lesson 04.</p>
+  </div>
+
+  <!-- Quiz -->
+  <div class="quiz">
+    <h2>Quick Check — 5 Questions</h2>
+    <p style="font-family:sans-serif;font-size:0.86rem;color:var(--muted);margin-bottom:1.25rem">Test your understanding of the bug life cycle before moving on.</p>
+
+    <div class="question" id="q1">
+      <p>1. Who sets the Severity of a bug?</p>
+      <div class="options">
+        <label><input type="radio" name="q1" value="a"> The Product Manager</label>
+        <label><input type="radio" name="q1" value="b"> The QA Engineer</label>
+        <label><input type="radio" name="q1" value="c"> The Developer</label>
+        <label><input type="radio" name="q1" value="d"> The client</label>
+      </div>
+    </div>
+
+    <div class="question" id="q2">
+      <p>2. A bug is marked "Deferred". What does that mean?</p>
+      <div class="options">
+        <label><input type="radio" name="q2" value="a"> The bug was rejected because it is not real</label>
+        <label><input type="radio" name="q2" value="b"> The developer cannot reproduce it</label>
+        <label><input type="radio" name="q2" value="c"> The bug is real but won't be fixed in this release</label>
+        <label><input type="radio" name="q2" value="d"> The bug was fixed and is ready for retesting</label>
+      </div>
+    </div>
+
+    <div class="question" id="q3">
+      <p>3. The CEO's name is misspelled on the homepage. What is the most likely Severity and Priority?</p>
+      <div class="options">
+        <label><input type="radio" name="q3" value="a"> Critical Severity, High Priority</label>
+        <label><input type="radio" name="q3" value="b"> Trivial Severity, High Priority</label>
+        <label><input type="radio" name="q3" value="c"> Minor Severity, Low Priority</label>
+        <label><input type="radio" name="q3" value="d"> Critical Severity, Low Priority</label>
+      </div>
+    </div>
+
+    <div class="question" id="q4">
+      <p>4. A developer has marked a bug as "Fixed". What should the QA do next?</p>
+      <div class="options">
+        <label><input type="radio" name="q4" value="a"> Close the bug immediately — the developer says it's done</label>
+        <label><input type="radio" name="q4" value="b"> Mark it as "Verified" without testing</label>
+        <label><input type="radio" name="q4" value="c"> Re-run the original steps to confirm the fix, then Close or Reopen</label>
+        <label><input type="radio" name="q4" value="d"> Raise a new bug for the same issue</label>
+      </div>
+    </div>
+
+    <div class="question" id="q5">
+      <p>5. Which of these is the best bug title?</p>
+      <div class="options">
+        <label><input type="radio" name="q5" value="a"> "Login bug found"</label>
+        <label><input type="radio" name="q5" value="b"> "Problem with the form"</label>
+        <label><input type="radio" name="q5" value="c"> "Login page accepts SQL injection in the email field, allowing bypass of authentication"</label>
+        <label><input type="radio" name="q5" value="d"> "Security issue"</label>
+      </div>
+    </div>
+
+    <button class="btn" onclick="checkQuiz()">Check My Answers</button>
+    <div class="quiz-result" id="quiz-result"></div>
+  </div>
+
+  <div class="callout interview">
+    <div class="callout-title">What You Can Say in an Interview After This Lesson</div>
+    <p><em>"I have experience raising bug reports in YouTrack. I understand the full bug life cycle — from raising a new defect through to retest and closure — and I know the difference between severity and priority. I found and documented a Critical severity security defect in the OWASP Juice Shop, including exact reproduction steps, environment details, expected vs actual results, and a screenshot."</em></p>
+  </div>
+
+  <footer class="lesson-footer">
+    <div>
+      <div style="font-weight:700;margin-bottom:0.2rem">Questions?</div>
+      Ask: "What if I can't reproduce the bug consistently?" or "When would a QA reopen a bug?"
+    </div>
+    <div>
+      <div style="font-weight:700;margin-bottom:0.4rem">After you've raised your first bug:</div>
+      <span style="background:var(--accent);color:#fff;padding:0.5rem 1rem;border-radius:6px;display:inline-block">→ Lesson 04: Agile &amp; Your Role as QA in a Sprint</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+const answers = { q1:'b', q2:'c', q3:'b', q4:'c', q5:'c' };
+function checkQuiz() {
+  let score = 0;
+  for (const [q, correct] of Object.entries(answers)) {
+    const selected = document.querySelector(`input[name="${q}"]:checked`);
+    document.querySelectorAll(`#${q} .options label`).forEach(label => {
+      const input = label.querySelector('input');
+      label.classList.remove('correct','wrong');
+      if (input.value === correct) label.classList.add('correct');
+      else if (selected && input.value === selected.value) label.classList.add('wrong');
+    });
+    if (selected && selected.value === correct) score++;
+  }
+  const r = document.getElementById('quiz-result');
+  r.style.display = 'block';
+  if (score === 5) { r.className='quiz-result pass'; r.textContent='Perfect — 5/5! Go raise your first real bug.'; }
+  else if (score >= 3) { r.className='quiz-result pass'; r.textContent=`${score}/5 — Good. Review the highlighted answers, then start the exercise.`; }
+  else { r.className='quiz-result fail'; r.textContent=`${score}/5 — Re-read sections 2 and 3 before continuing.`; }
+}
+</script>
+</body>
+</html>
