@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 01 — What QA Is</title>
+  <style>
+    :root {
+      --bg: #fafaf8;
+      --surface: #ffffff;
+      --border: #e5e5e0;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --green: #16a34a;
+      --green-light: #f0fdf4;
+      --amber: #d97706;
+      --amber-light: #fffbeb;
+      --red: #dc2626;
+      --red-light: #fef2f2;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      padding: 2rem 1rem;
+    }
+
+    .page {
+      max-width: 740px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    .lesson-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .lesson-tag {
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: var(--accent-light);
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-size: 2rem;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .meta {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      font-family: sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* ── Typography ── */
+    h2 {
+      font-size: 1.35rem;
+      margin: 2.5rem 0 0.75rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 1.05rem;
+      margin: 1.5rem 0 0.4rem;
+      color: var(--accent);
+      font-family: sans-serif;
+    }
+    p { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; }
+    strong { font-weight: 700; }
+    em { font-style: italic; }
+    a { color: var(--accent); }
+
+    /* ── Callout boxes ── */
+    .callout {
+      border-left: 4px solid;
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 1.5rem 0;
+    }
+    .callout-title {
+      font-family: sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+    .callout.analogy   { border-color: var(--green);  background: var(--green-light); }
+    .callout.analogy .callout-title { color: var(--green); }
+    .callout.insight   { border-color: var(--accent); background: var(--accent-light); }
+    .callout.insight .callout-title { color: var(--accent); }
+    .callout.interview { border-color: var(--amber);  background: var(--amber-light); }
+    .callout.interview .callout-title { color: var(--amber); }
+    .callout.warning   { border-color: var(--red);    background: var(--red-light); }
+    .callout.warning .callout-title { color: var(--red); }
+
+    /* ── Comparison table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.93rem;
+    }
+    th {
+      background: var(--text);
+      color: #fff;
+      text-align: left;
+      padding: 0.65rem 0.9rem;
+      font-family: sans-serif;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    td {
+      padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #f5f5f3; }
+    tr:last-child td { border-bottom: none; }
+
+    /* ── Quiz ── */
+    .quiz {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    .quiz h2 { border: none; margin-top: 0; font-size: 1.1rem; }
+    .question { margin-bottom: 1.5rem; }
+    .question p { font-weight: 700; margin-bottom: 0.6rem; }
+    .options label {
+      display: block;
+      padding: 0.55rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 0.4rem;
+      cursor: pointer;
+      font-family: sans-serif;
+      font-size: 0.92rem;
+      transition: background 0.15s;
+    }
+    .options label:hover { background: var(--accent-light); border-color: var(--accent); }
+    .options input { margin-right: 0.5rem; }
+    .options label.correct { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 700; }
+    .options label.wrong   { background: var(--red-light);   border-color: var(--red);   color: var(--red); }
+    .btn {
+      font-family: sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.65rem 1.4rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn:hover { background: #1d4ed8; }
+    .quiz-result {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-family: sans-serif;
+      font-weight: 700;
+    }
+    .quiz-result.pass { background: var(--green-light); color: var(--green); }
+    .quiz-result.fail { background: var(--red-light);   color: var(--red);   }
+
+    /* ── Exercise ── */
+    .exercise {
+      background: #1a1a1a;
+      color: #e5e5e0;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 2rem 0;
+      font-family: sans-serif;
+    }
+    .exercise h2 { color: #fff; border-color: #444; font-size: 1.05rem; }
+    .exercise p, .exercise li { color: #ccc; font-size: 0.93rem; }
+    .exercise .task-label {
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      background: #333;
+      color: #7dd3fc;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 0.4rem;
+    }
+
+    /* ── Footer ── */
+    .lesson-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid var(--border);
+      font-family: sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .next-lesson {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── Header ── -->
+  <header class="lesson-header">
+    <div class="lesson-tag">Lesson 01 of 12 &nbsp;·&nbsp; QA Fundamentals</div>
+    <h1>What QA Is — and Why You're Already Halfway There</h1>
+    <p class="subtitle">Your healthcare skills translated into the language of software quality.</p>
+    <div class="meta">
+      <span>⏱ 20 minutes</span>
+      <span>🎯 1 concept, 5 vocabulary terms</span>
+      <span>✍️ 1 exercise</span>
+    </div>
+  </header>
+
+  <!-- ── Section 1 ── -->
+  <h2>1. The One-Sentence Definition of QA</h2>
+
+  <p><strong>Quality Assurance (QA) is the discipline of making sure software does what it's supposed to do — before it reaches real users.</strong></p>
+
+  <p>That's it. Everything else — test cases, bug reports, JIRA, Agile sprints — is just the toolkit used to make that happen.</p>
+
+  <div class="callout analogy">
+    <div class="callout-title">Healthcare Parallel</div>
+    <p>Before a patient is discharged from Royal Surrey, a checklist is followed: medications reviewed, mobility assessed, follow-up booked, patient safety confirmed. Nobody gets discharged until the checks pass.</p>
+    <p style="margin:0">QA is exactly this — a structured, documented process that software goes through before it's "discharged" to users. You have been doing QA-style thinking every day at work.</p>
+  </div>
+
+  <!-- ── Section 2 ── -->
+  <h2>2. Three Terms Everyone Confuses</h2>
+
+  <p>In almost every Junior QA interview, you will be asked: <em>"What's the difference between QA, QC, and Testing?"</em> Get this right and you immediately stand out.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Term</th>
+        <th>What it means</th>
+        <th>Your healthcare equivalent</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>QA</strong><br><em>Quality Assurance</em></td>
+        <td>Proactive. Sets up the <em>processes and standards</em> so that defects don't occur in the first place.</td>
+        <td>Infection control protocols on the ward. You don't wait for an outbreak — you prevent it with standards everyone follows.</td>
+      </tr>
+      <tr>
+        <td><strong>QC</strong><br><em>Quality Control</em></td>
+        <td>Reactive. Checks the <em>output</em> of a process against a standard to find defects.</td>
+        <td>Checking a medication dose against the prescription before giving it to a patient.</td>
+      </tr>
+      <tr>
+        <td><strong>Testing</strong></td>
+        <td>A specific <em>activity within QC</em>. Actually running the software to find defects.</td>
+        <td>Physically pressing the call bell to verify it rings at the nurses' station.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout insight">
+    <div class="callout-title">The Key Insight</div>
+    <p>QA is <strong>proactive</strong> (prevents defects). QC is <strong>reactive</strong> (detects defects). Testing is a <strong>subset of QC</strong> — it's one specific technique. Most Junior QA roles involve both QA activities (reviewing requirements) and testing activities (executing test cases). The job title says "QA" but the work is really both.</p>
+  </div>
+
+  <div class="callout interview">
+    <div class="callout-title">Your Interview Answer</div>
+    <p><em>"QA is process-focused and preventive — it builds standards so defects don't occur. QC is product-focused and detective — it checks outputs against expectations. Testing is a specific activity within QC where you actually execute the software to find defects. In a Junior QA role, I'd be involved in all three: reviewing requirements early to prevent misunderstandings, checking outputs against acceptance criteria, and executing test cases to find bugs."</em></p>
+  </div>
+
+  <!-- ── Section 3 ── -->
+  <h2>3. Verification vs Validation</h2>
+
+  <p>Two more terms that often come up:</p>
+
+  <table>
+    <thead>
+      <tr><th>Term</th><th>Question it answers</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Verification</strong></td>
+        <td>"Are we building the product <em>right</em>?" — against the spec</td>
+        <td>Checking that the login page was built exactly as the design document specified</td>
+      </tr>
+      <tr>
+        <td><strong>Validation</strong></td>
+        <td>"Are we building the <em>right</em> product?" — against user needs</td>
+        <td>Giving the login page to real users and checking they can actually log in without confusion</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout analogy">
+    <div class="callout-title">Healthcare Parallel</div>
+    <p><strong>Verification</strong> = "Did I follow the care protocol correctly?" (checking against the written standard)</p>
+    <p style="margin:0"><strong>Validation</strong> = "Did following the protocol actually help the patient?" (checking against the real-world outcome)</p>
+  </div>
+
+  <!-- ── Section 4 ── -->
+  <h2>4. The Five Vocabulary Words for This Lesson</h2>
+
+  <p>Learn these cold. You'll use them in every conversation from here on.</p>
+
+  <table>
+    <thead>
+      <tr><th>Term</th><th>Definition</th><th>Healthcare analogy</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Defect / Bug</strong></td>
+        <td>When software behaves differently from how it should</td>
+        <td>A medication dispensing machine giving the wrong dose — a deviation from expected behaviour</td>
+      </tr>
+      <tr>
+        <td><strong>Test Case</strong></td>
+        <td>A documented set of steps to verify one specific piece of behaviour</td>
+        <td>A clinical procedure checklist — steps defined in advance, expected outcome known</td>
+      </tr>
+      <tr>
+        <td><strong>Expected Result</strong></td>
+        <td>What SHOULD happen when you run the test</td>
+        <td>Patient's blood pressure should be within normal range after medication</td>
+      </tr>
+      <tr>
+        <td><strong>Actual Result</strong></td>
+        <td>What ACTUALLY happened when you ran the test</td>
+        <td>Patient's blood pressure reading after medication was administered</td>
+      </tr>
+      <tr>
+        <td><strong>Pass / Fail</strong></td>
+        <td>Actual result matched expected (Pass) or didn't (Fail)</td>
+        <td>Vitals within range = Pass. Out of range = Fail → escalate</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Section 5 ── -->
+  <h2>5. Why Your Background Is an Asset, Not a Gap</h2>
+
+  <p>Many career switchers apologise for their background in interviews. <strong>Don't.</strong> Here is what your healthcare experience actually demonstrates to a hiring manager:</p>
+
+  <ul>
+    <li><strong>Protocol discipline</strong> — You know how to follow a procedure precisely, in order, without skipping steps. This is exactly what executing a test case requires.</li>
+    <li><strong>Documentation accuracy</strong> — Patient records must be factual, reproducible, and clear. Bug reports are the same.</li>
+    <li><strong>Outcome verification</strong> — You already think in terms of "expected vs actual." That's the core of every test case.</li>
+    <li><strong>Escalation judgement</strong> — Knowing when to raise a concern vs handle it yourself. QAs must decide when a bug is critical vs low priority.</li>
+    <li><strong>High-stakes mindset</strong> — You work in an environment where mistakes hurt real people. That care and rigour is exactly what healthcare IT, fintech, and regulated industries are hiring for.</li>
+  </ul>
+
+  <div class="callout interview">
+    <div class="callout-title">Your Interview Narrative</div>
+    <p><em>"My healthcare background gives me a natural QA mindset — I'm trained to follow protocols precisely, document observations accurately, compare actual outcomes against expected ones, and escalate when something is wrong. In healthcare, errors affect patients. That same rigour applies to software, especially in regulated industries like healthcare IT. I'm not starting from zero — I'm translating skills I already use every day."</em></p>
+  </div>
+
+  <!-- ── Quiz ── -->
+  <div class="quiz">
+    <h2>Quick Check — 4 Questions</h2>
+    <p style="font-family:sans-serif;font-size:0.88rem;color:var(--muted);margin-bottom:1.25rem">Select the best answer for each question. You'll see instant feedback.</p>
+
+    <div class="question" id="q1">
+      <p>1. Which of the following best describes Quality Assurance?</p>
+      <div class="options">
+        <label><input type="radio" name="q1" value="a"> Finding bugs in finished software</label>
+        <label><input type="radio" name="q1" value="b"> Setting up processes so defects don't occur in the first place</label>
+        <label><input type="radio" name="q1" value="c"> Writing code to automate tests</label>
+        <label><input type="radio" name="q1" value="d"> Approving software for release</label>
+      </div>
+    </div>
+
+    <div class="question" id="q2">
+      <p>2. In a test case, the "Expected Result" is:</p>
+      <div class="options">
+        <label><input type="radio" name="q2" value="a"> What the developer thinks will happen</label>
+        <label><input type="radio" name="q2" value="b"> The bug that was found</label>
+        <label><input type="radio" name="q2" value="c"> What should happen when the test is run, based on requirements</label>
+        <label><input type="radio" name="q2" value="d"> The test steps written down</label>
+      </div>
+    </div>
+
+    <div class="question" id="q3">
+      <p>3. Checking that a medication dose matches the prescription before giving it to a patient is most like:</p>
+      <div class="options">
+        <label><input type="radio" name="q3" value="a"> Quality Assurance</label>
+        <label><input type="radio" name="q3" value="b"> Quality Control</label>
+        <label><input type="radio" name="q3" value="c"> Test Planning</label>
+        <label><input type="radio" name="q3" value="d"> Deployment</label>
+      </div>
+    </div>
+
+    <div class="question" id="q4">
+      <p>4. "Are we building the right product?" is the question answered by:</p>
+      <div class="options">
+        <label><input type="radio" name="q4" value="a"> Verification</label>
+        <label><input type="radio" name="q4" value="b"> Validation</label>
+        <label><input type="radio" name="q4" value="c"> Regression Testing</label>
+        <label><input type="radio" name="q4" value="d"> Unit Testing</label>
+      </div>
+    </div>
+
+    <button class="btn" onclick="checkQuiz()">Check My Answers</button>
+    <div class="quiz-result" id="quiz-result"></div>
+  </div>
+
+  <!-- ── Exercise ── -->
+  <div class="exercise">
+    <h2>Exercise — Write Your First Test Case</h2>
+    <p style="margin-bottom:1rem">You already know how to do this — you just need to learn the format.</p>
+
+    <p class="task-label">TASK 1 — THINK</p>
+    <p>Think of the <strong>NHS App</strong> (or any app you use). Pick the "Book a GP Appointment" feature. Imagine you're checking it works correctly.</p>
+
+    <p class="task-label" style="margin-top:1rem">TASK 2 — WRITE</p>
+    <p>Using this template, write ONE test case. Paper and pen is fine. Keep it simple.</p>
+    <ul>
+      <li><strong>Test Case ID:</strong> TC_BOOK_001</li>
+      <li><strong>Title:</strong> (what are you testing?)</li>
+      <li><strong>Preconditions:</strong> (what must be true before you start?)</li>
+      <li><strong>Steps:</strong> (numbered, specific actions)</li>
+      <li><strong>Expected Result:</strong> (what SHOULD happen?)</li>
+    </ul>
+
+    <p class="task-label" style="margin-top:1rem">TASK 3 — DISCUSS</p>
+    <p>Show it to Khushal and ask: "Does this look like a real test case?" His feedback is the most valuable thing you can get right now.</p>
+
+    <p class="task-label" style="margin-top:1rem">WHEN DONE</p>
+    <p>Come back and tell me what you wrote — or paste it here and I'll give you feedback on it. That starts Lesson 02.</p>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="lesson-footer">
+    <div>
+      <div style="font-weight:700;margin-bottom:0.2rem">Questions?</div>
+      Ask your teacher: <em>"I didn't understand [X]"</em> or <em>"Can you give me another example of [Y]?"</em>
+    </div>
+    <div>
+      <div style="font-weight:700;margin-bottom:0.4rem">When you're ready:</div>
+      <span style="font-family:sans-serif;font-size:0.85rem;background:var(--accent);color:#fff;padding:0.5rem 1rem;border-radius:6px;display:inline-block">→ Lesson 02: The Software Development Lifecycle</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+const answers = { q1: 'b', q2: 'c', q3: 'b', q4: 'b' };
+
+function checkQuiz() {
+  let score = 0;
+  for (const [q, correct] of Object.entries(answers)) {
+    const selected = document.querySelector(`input[name="${q}"]:checked`);
+    const labels = document.querySelectorAll(`#${q} .options label`);
+    labels.forEach(label => {
+      const input = label.querySelector('input');
+      label.classList.remove('correct', 'wrong');
+      if (input.value === correct) label.classList.add('correct');
+      else if (selected && input.value === selected.value) label.classList.add('wrong');
+    });
+    if (selected && selected.value === correct) score++;
+  }
+  const result = document.getElementById('quiz-result');
+  result.style.display = 'block';
+  if (score === 4) {
+    result.className = 'quiz-result pass';
+    result.textContent = `Perfect — 4/4! You're ready for Lesson 02.`;
+  } else if (score >= 2) {
+    result.className = 'quiz-result pass';
+    result.textContent = `${score}/4 — Good start. Review the highlighted answers above, then move on.`;
+  } else {
+    result.className = 'quiz-result fail';
+    result.textContent = `${score}/4 — Re-read sections 2 and 3 above, then try again.`;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 05 — API Testing with Postman</title>
+  <style>
+    :root {
+      --bg: #fafaf8; --surface: #fff; --border: #e5e5e0;
+      --text: #1a1a1a; --muted: #6b6b6b; --accent: #2563eb;
+      --accent-light: #eff6ff; --green: #16a34a; --green-light: #f0fdf4;
+      --amber: #d97706; --amber-light: #fffbeb; --red: #dc2626;
+      --red-light: #fef2f2; --purple: #7c3aed; --purple-light: #f5f3ff;
+      --orange: #ea580c; --orange-light: #fff7ed;
+      --teal: #0d9488; --teal-light: #f0fdfa;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); line-height: 1.75; padding: 2rem 1rem; }
+    .page { max-width: 760px; margin: 0 auto; }
+
+    .lesson-header { border-bottom: 2px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2.5rem; }
+    .lesson-tag { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--orange); text-transform: uppercase; letter-spacing: 0.1em; background: var(--orange-light); display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.75rem; }
+    h1 { font-size: 1.9rem; line-height: 1.2; margin-bottom: 0.5rem; }
+    .subtitle { font-size: 1.05rem; color: var(--muted); font-style: italic; }
+    .meta { display: flex; gap: 1.5rem; margin-top: 1rem; font-family: sans-serif; font-size: 0.82rem; color: var(--muted); flex-wrap: wrap; }
+
+    h2 { font-size: 1.3rem; margin: 2.5rem 0 0.75rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1rem; margin: 1.5rem 0 0.4rem; color: var(--accent); font-family: sans-serif; font-weight: 700; }
+    p { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; }
+    strong { font-weight: 700; }
+
+    .callout { border-left: 4px solid; padding: 1rem 1.25rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.5rem 0; }
+    .callout-title { font-family: sans-serif; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+    .callout.analogy { border-color: var(--green); background: var(--green-light); }
+    .callout.analogy .callout-title { color: var(--green); }
+    .callout.insight { border-color: var(--accent); background: var(--accent-light); }
+    .callout.insight .callout-title { color: var(--accent); }
+    .callout.interview { border-color: var(--amber); background: var(--amber-light); }
+    .callout.interview .callout-title { color: var(--amber); }
+    .callout.tool { border-color: var(--orange); background: var(--orange-light); }
+    .callout.tool .callout-title { color: var(--orange); }
+    .callout.warning { border-color: var(--red); background: var(--red-light); }
+    .callout.warning .callout-title { color: var(--red); }
+
+    table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+    th { background: var(--text); color: #fff; text-align: left; padding: 0.65rem 0.9rem; font-family: sans-serif; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:nth-child(even) td { background: #f5f5f3; }
+    tr:last-child td { border-bottom: none; }
+
+    /* HTTP method badges */
+    .method { display: inline-block; font-family: 'Courier New', monospace; font-size: 0.78rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px; margin-right: 0.4rem; }
+    .GET    { background: #dcfce7; color: #15803d; }
+    .POST   { background: #fef9c3; color: #854d0e; }
+    .PUT    { background: #dbeafe; color: #1e40af; }
+    .PATCH  { background: #ede9fe; color: #5b21b6; }
+    .DELETE { background: #fee2e2; color: #991b1b; }
+
+    /* Status code blocks */
+    .status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin: 1.25rem 0; }
+    .status-card { border-radius: var(--radius); padding: 0.85rem 1rem; border: 1px solid; }
+    .status-code { font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .status-name { font-family: sans-serif; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .status-desc { font-size: 0.82rem; color: var(--muted); }
+    .s2xx { background: #f0fdf4; border-color: #bbf7d0; }
+    .s2xx .status-code { color: var(--green); }
+    .s3xx { background: #eff6ff; border-color: #bfdbfe; }
+    .s3xx .status-code { color: var(--accent); }
+    .s4xx { background: var(--amber-light); border-color: #fde68a; }
+    .s4xx .status-code { color: var(--amber); }
+    .s5xx { background: var(--red-light); border-color: #fecaca; }
+    .s5xx .status-code { color: var(--red); }
+
+    /* Postman request card */
+    .request-card { background: #1e1e2e; border-radius: var(--radius); overflow: hidden; margin: 1.5rem 0; font-family: 'Courier New', monospace; }
+    .request-bar { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: #2a2a3e; border-bottom: 1px solid #3a3a5e; }
+    .request-method { font-size: 0.82rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 4px; }
+    .request-url { color: #7dd3fc; font-size: 0.88rem; flex: 1; word-break: break-all; }
+    .request-section { padding: 0.6rem 1rem; border-bottom: 1px solid #2a2a3e; }
+    .request-section-title { font-family: sans-serif; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: #6b6b8e; margin-bottom: 0.4rem; }
+    .request-body { color: #a3e635; font-size: 0.82rem; line-height: 1.6; white-space: pre; }
+    .response-section { padding: 0.6rem 1rem; }
+    .response-status { font-family: sans-serif; font-size: 0.78rem; margin-bottom: 0.4rem; }
+    .response-body { color: #c4b5fd; font-size: 0.8rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
+
+    /* Step guide */
+    .steps-guide { counter-reset: step; margin: 1.5rem 0; }
+    .step { display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: flex-start; }
+    .step-num { counter-increment: step; background: var(--orange); color: #fff; font-family: sans-serif; font-weight: 700; font-size: 0.82rem; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0.1rem; }
+    .step-num::before { content: counter(step); }
+    .step-content strong { display: block; font-family: sans-serif; font-size: 0.92rem; margin-bottom: 0.2rem; }
+    .step-content p { margin: 0; font-size: 0.9rem; color: var(--muted); }
+    code { font-family: 'Courier New', monospace; background: #f0f0ed; padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.88em; }
+
+    /* Exercise */
+    .exercise { background: #1a1a1a; color: #e5e5e0; border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .exercise h2 { color: #fff; border-color: #444; font-size: 1.05rem; margin-top: 0; }
+    .exercise p, .exercise li { color: #ccc; font-size: 0.92rem; }
+    .exercise strong { color: #fff; }
+    .task-label { font-family: 'Courier New', monospace; font-size: 0.78rem; background: #333; color: #7dd3fc; padding: 0.15rem 0.5rem; border-radius: 3px; display: inline-block; margin: 0.75rem 0 0.4rem; }
+    .url-chip { display: inline-block; background: #111; color: #7dd3fc; font-family: 'Courier New', monospace; font-size: 0.82rem; padding: 0.25rem 0.6rem; border-radius: 4px; border: 1px solid #333; }
+
+    /* API test case */
+    .api-tc { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 1rem 0; }
+    .api-tc-header { background: #f5f5f3; padding: 0.5rem 1rem; font-family: sans-serif; font-size: 0.82rem; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; gap: 0.75rem; align-items: center; }
+    .api-tc-body { padding: 0.75rem 1rem; font-size: 0.88rem; }
+    .api-tc-row { display: grid; grid-template-columns: 130px 1fr; gap: 0.5rem; margin-bottom: 0.35rem; }
+    .api-tc-label { font-family: sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+
+    /* Quiz */
+    .quiz { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .quiz h2 { border: none; margin-top: 0; font-size: 1.05rem; }
+    .question { margin-bottom: 1.5rem; }
+    .question p { font-weight: 700; margin-bottom: 0.6rem; font-size: 0.95rem; }
+    .options label { display: block; padding: 0.5rem 0.85rem; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 0.35rem; cursor: pointer; font-family: sans-serif; font-size: 0.9rem; transition: background 0.15s; }
+    .options label:hover { background: var(--accent-light); border-color: var(--accent); }
+    .options input { margin-right: 0.5rem; }
+    .options label.correct { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 700; }
+    .options label.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+    .btn { font-family: sans-serif; font-size: 0.9rem; font-weight: 700; background: var(--orange); color: #fff; border: none; padding: 0.65rem 1.4rem; border-radius: 6px; cursor: pointer; }
+    .btn:hover { opacity: 0.9; }
+    .quiz-result { display: none; margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-family: sans-serif; font-weight: 700; }
+    .quiz-result.pass { background: var(--green-light); color: var(--green); }
+    .quiz-result.fail { background: var(--red-light); color: var(--red); }
+
+    .lesson-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 2px solid var(--border); font-family: sans-serif; font-size: 0.85rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header class="lesson-header">
+    <div class="lesson-tag">Lesson 05 of 12 &nbsp;·&nbsp; API Testing</div>
+    <h1>API Testing with Postman</h1>
+    <p class="subtitle">The skill that separates good Junior QAs — testing what users never see, but always rely on.</p>
+    <div class="meta">
+      <span>⏱ 45–60 minutes</span>
+      <span>🛠 Postman + Juice Shop API</span>
+      <span>🔌 You will send real API requests today</span>
+    </div>
+  </header>
+
+  <!-- Section 1 -->
+  <h2>1. What is an API — and Why Do We Test It?</h2>
+
+  <p>Every time you use an app, two things are happening at once:</p>
+  <ul>
+    <li>The <strong>UI (User Interface)</strong> — what you see and click: buttons, forms, pages</li>
+    <li>The <strong>API (Application Programming Interface)</strong> — the invisible layer underneath that fetches, saves, and processes data</li>
+  </ul>
+
+  <p>When you search for "apple" on the Juice Shop, your browser sends a request to an API endpoint, the API fetches matching products from a database, and the UI displays them. The UI is just a wrapper around the API.</p>
+
+  <div class="callout analogy">
+    <div class="callout-title">Healthcare Parallel</div>
+    <p>Think of a hospital blood test. The <strong>UI</strong> is the form you fill in at the reception desk. The <strong>API</strong> is the lab system underneath — the one that actually processes the sample, stores results in the database, and sends them to the doctor's system.</p>
+    <p style="margin:0">You could test the reception form perfectly and miss a critical bug in the lab system. API testing goes directly to the lab — no form needed.</p>
+  </div>
+
+  <h3>Why QAs test APIs, not just UIs</h3>
+  <ul>
+    <li><strong>Faster</strong> — no browser to load, no clicks required. API tests run in milliseconds.</li>
+    <li><strong>More thorough</strong> — you can send data the UI would never allow (e.g., negative quantities, missing fields)</li>
+    <li><strong>Catches more bugs</strong> — the UI might mask an API error with a friendly message; API testing sees the raw truth</li>
+    <li><strong>Earlier</strong> — the API exists before the UI is built. You can start testing in week one of a sprint</li>
+  </ul>
+
+  <!-- Section 2 -->
+  <h2>2. REST APIs — The Standard You'll Always Work With</h2>
+
+  <p>A <strong>REST API</strong> works like a conversation between two systems. Your tool (Postman) sends a <strong>request</strong>, and the server sends back a <strong>response</strong>.</p>
+
+  <p>Every request has four parts:</p>
+  <table>
+    <thead><tr><th>Part</th><th>What it is</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Method</strong></td><td>What you want to DO</td><td><span class="method GET">GET</span> fetch data</td></tr>
+      <tr><td><strong>URL (Endpoint)</strong></td><td>WHERE on the server</td><td><code>http://192.168.0.202:9058/api/Products</code></td></tr>
+      <tr><td><strong>Headers</strong></td><td>Meta-information (auth token, content type)</td><td><code>Content-Type: application/json</code></td></tr>
+      <tr><td><strong>Body</strong></td><td>Data you're sending (POST/PUT only)</td><td><code>{"email": "test@test.com"}</code></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 3 -->
+  <h2>3. HTTP Methods — The Four You Must Know</h2>
+
+  <table>
+    <thead><tr><th>Method</th><th>What it does</th><th>Juice Shop example</th><th>Healthcare analogy</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="method GET">GET</span></td>
+        <td>Retrieve data. Never changes anything.</td>
+        <td>Fetch list of products</td>
+        <td>Reading a patient's medical record</td>
+      </tr>
+      <tr>
+        <td><span class="method POST">POST</span></td>
+        <td>Create new data</td>
+        <td>Register a new user account</td>
+        <td>Admitting a new patient into the system</td>
+      </tr>
+      <tr>
+        <td><span class="method PUT">PUT</span></td>
+        <td>Replace existing data completely</td>
+        <td>Update a user's full profile</td>
+        <td>Replacing an entire patient record</td>
+      </tr>
+      <tr>
+        <td><span class="method DELETE">DELETE</span></td>
+        <td>Remove data</td>
+        <td>Delete a basket item</td>
+        <td>Removing a patient from a ward list</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout insight">
+    <div class="callout-title">The Golden Rule of GET</div>
+    <p>A <span class="method GET">GET</span> request must <strong>never change data</strong>. If a GET request creates, updates, or deletes anything — that is a bug. Always test this.</p>
+  </div>
+
+  <!-- Section 4 -->
+  <h2>4. HTTP Status Codes — Know These Cold</h2>
+
+  <p>Every API response includes a 3-digit status code. This is how the server tells you whether your request succeeded or failed — and why.</p>
+
+  <div class="status-grid">
+    <div class="status-card s2xx">
+      <div class="status-code">200</div>
+      <div class="status-name">OK</div>
+      <div class="status-desc">Request succeeded. Data returned.</div>
+    </div>
+    <div class="status-card s2xx">
+      <div class="status-code">201</div>
+      <div class="status-name">Created</div>
+      <div class="status-desc">New resource created successfully (POST).</div>
+    </div>
+    <div class="status-card s2xx">
+      <div class="status-code">204</div>
+      <div class="status-name">No Content</div>
+      <div class="status-desc">Success, but no data to return (often DELETE).</div>
+    </div>
+    <div class="status-card s4xx">
+      <div class="status-code">400</div>
+      <div class="status-name">Bad Request</div>
+      <div class="status-desc">Request was malformed — missing field, wrong format.</div>
+    </div>
+    <div class="status-card s4xx">
+      <div class="status-code">401</div>
+      <div class="status-name">Unauthorized</div>
+      <div class="status-desc">Not logged in — authentication required.</div>
+    </div>
+    <div class="status-card s4xx">
+      <div class="status-code">403</div>
+      <div class="status-name">Forbidden</div>
+      <div class="status-desc">Logged in, but not allowed to do this.</div>
+    </div>
+    <div class="status-card s4xx">
+      <div class="status-code">404</div>
+      <div class="status-name">Not Found</div>
+      <div class="status-desc">Resource doesn't exist at this URL.</div>
+    </div>
+    <div class="status-card s5xx">
+      <div class="status-code">500</div>
+      <div class="status-name">Server Error</div>
+      <div class="status-desc">The server crashed. Always a bug worth raising.</div>
+    </div>
+  </div>
+
+  <div class="callout interview">
+    <div class="callout-title">Interview: 401 vs 403 — Everyone Gets This Wrong</div>
+    <p><strong>401 Unauthorized</strong> = "I don't know who you are — please log in first."<br>
+    <strong>403 Forbidden</strong> = "I know exactly who you are — and you're not allowed to do this."</p>
+    <p style="margin:0">Healthcare: 401 = a stranger trying to enter a ward without a badge. 403 = a nurse trying to access the consultant's private notes — authenticated, but not authorised.</p>
+  </div>
+
+  <!-- Section 5 -->
+  <h2>5. Getting Started with Postman</h2>
+
+  <p>Postman is a free tool for sending API requests. Download it at <code>postman.com/downloads</code> if you haven't already. The desktop app is best.</p>
+
+  <div class="steps-guide">
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <strong>Open Postman → New Request</strong>
+        <p>Click the <strong>+</strong> tab to create a new request. You'll see a URL bar and a method dropdown (GET, POST, etc.).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <strong>Set the method and URL</strong>
+        <p>Select <strong>GET</strong> from the dropdown. Type the URL: <code>http://192.168.0.202:9058/api/Products</code></p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <strong>Click Send</strong>
+        <p>Postman sends the request. In the bottom panel you'll see the <strong>Status code</strong>, <strong>Time</strong>, and the <strong>Response body</strong> — a JSON list of all Juice Shop products.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <strong>Read the response</strong>
+        <p>Look at: the status code (should be <strong>200</strong>), the response time (milliseconds), and the JSON body. Each product has an id, name, description, price, and image.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <strong>Create a Collection</strong>
+        <p>Click <strong>Save</strong> → <strong>New Collection</strong> → name it <strong>"Juice Shop API Tests"</strong>. Save each request here. A collection is like a test suite — but for API tests.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6 -->
+  <h2>6. The Juice Shop API — Your Test Targets</h2>
+
+  <p>Here are the key endpoints you'll work with. All requests go to base URL <code>http://192.168.0.202:9058</code>.</p>
+
+  <table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>What it does</th><th>Expected status</th></tr></thead>
+    <tbody>
+      <tr><td><span class="method GET">GET</span></td><td><code>/api/Products</code></td><td>Get all products</td><td>200</td></tr>
+      <tr><td><span class="method GET">GET</span></td><td><code>/api/Products/1</code></td><td>Get product with ID 1</td><td>200</td></tr>
+      <tr><td><span class="method GET">GET</span></td><td><code>/api/Products/9999</code></td><td>Get a product that doesn't exist</td><td>200 or 404*</td></tr>
+      <tr><td><span class="method POST">POST</span></td><td><code>/rest/user/login</code></td><td>Log in with email + password</td><td>200</td></tr>
+      <tr><td><span class="method POST">POST</span></td><td><code>/rest/user/login</code></td><td>Log in with wrong password</td><td>401</td></tr>
+      <tr><td><span class="method POST">POST</span></td><td><code>/api/Users</code></td><td>Register a new user</td><td>201</td></tr>
+      <tr><td><span class="method GET">GET</span></td><td><code>/rest/user/whoami</code></td><td>Get currently logged-in user</td><td>200</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.85rem;color:var(--muted)">* Sending actual results back matters — what the Juice Shop returns for a non-existent product is itself a QA finding.</p>
+
+  <!-- Example requests -->
+  <h3>Example 1 — GET all products</h3>
+
+  <div class="request-card">
+    <div class="request-bar">
+      <span class="request-method GET">GET</span>
+      <span class="request-url">http://192.168.0.202:9058/api/Products</span>
+    </div>
+    <div class="response-section">
+      <div class="request-section-title">Response — 200 OK</div>
+      <div class="response-body">{
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "name": "Apple Juice (1000ml)",
+      "description": "The all-time classic.",
+      "price": 1.99,
+      "image": "apple_juice.jpg"
+    },
+    ...
+  ]
+}</div>
+    </div>
+  </div>
+
+  <h3>Example 2 — POST login (valid credentials)</h3>
+
+  <div class="request-card">
+    <div class="request-bar">
+      <span class="request-method POST">POST</span>
+      <span class="request-url">http://192.168.0.202:9058/rest/user/login</span>
+    </div>
+    <div class="request-section">
+      <div class="request-section-title">Headers</div>
+      <div class="request-body">Content-Type: application/json</div>
+    </div>
+    <div class="request-section">
+      <div class="request-section-title">Body (raw JSON)</div>
+      <div class="request-body">{
+  "email": "admin@juice-sh.op",
+  "password": "admin123"
+}</div>
+    </div>
+    <div class="response-section">
+      <div class="request-section-title">Response — 200 OK</div>
+      <div class="response-body">{
+  "authentication": {
+    "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "bid": 1,
+    "umail": "admin@juice-sh.op"
+  }
+}</div>
+    </div>
+  </div>
+
+  <h3>Example 3 — POST login (wrong password)</h3>
+
+  <div class="request-card">
+    <div class="request-bar">
+      <span class="request-method POST">POST</span>
+      <span class="request-url">http://192.168.0.202:9058/rest/user/login</span>
+    </div>
+    <div class="request-section">
+      <div class="request-section-title">Body (raw JSON)</div>
+      <div class="request-body">{
+  "email": "admin@juice-sh.op",
+  "password": "wrongpassword"
+}</div>
+    </div>
+    <div class="response-section">
+      <div class="request-section-title">Response — 401 Unauthorized</div>
+      <div class="response-body">{
+  "error": "Invalid email or password."
+}</div>
+    </div>
+  </div>
+
+  <!-- Section 7 -->
+  <h2>7. What to Check in an API Test</h2>
+
+  <p>When you send a request, check all four of these — not just the status code:</p>
+
+  <table>
+    <thead><tr><th>Check</th><th>What to look for</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Status code</strong></td><td>Is it the right code for this scenario?</td><td>GET a product → expect 200, not 500</td></tr>
+      <tr><td><strong>Response body</strong></td><td>Is the data correct and complete?</td><td>Product name, price, description all present?</td></tr>
+      <tr><td><strong>Response time</strong></td><td>Is it fast enough? (under 2000ms is typical)</td><td>If GET /Products takes 8 seconds → performance bug</td></tr>
+      <tr><td><strong>Headers</strong></td><td>Security headers present? Content-type correct?</td><td>Response should say <code>Content-Type: application/json</code></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 8 -->
+  <h2>8. API Test Case Format</h2>
+
+  <p>API test cases follow the same structure as manual test cases — just with API-specific fields:</p>
+
+  <div class="api-tc">
+    <div class="api-tc-header">
+      <span class="method GET">GET</span>
+      <span>TC_API_001 — Retrieve all products successfully</span>
+    </div>
+    <div class="api-tc-body">
+      <div class="api-tc-row"><div class="api-tc-label">Endpoint</div><div><code>GET /api/Products</code></div></div>
+      <div class="api-tc-row"><div class="api-tc-label">Headers</div><div><code>None required</code></div></div>
+      <div class="api-tc-row"><div class="api-tc-label">Body</div><div>None (GET requests have no body)</div></div>
+      <div class="api-tc-row"><div class="api-tc-label">Expected status</div><div><strong>200 OK</strong></div></div>
+      <div class="api-tc-row"><div class="api-tc-label">Expected body</div><div>JSON array of products. Each product has: id, name, description, price, image fields.</div></div>
+      <div class="api-tc-row"><div class="api-tc-label">Expected time</div><div>Under 2000ms</div></div>
+    </div>
+  </div>
+
+  <div class="api-tc">
+    <div class="api-tc-header">
+      <span class="method POST">POST</span>
+      <span>TC_API_004 — Login with invalid password returns 401</span>
+    </div>
+    <div class="api-tc-body">
+      <div class="api-tc-row"><div class="api-tc-label">Endpoint</div><div><code>POST /rest/user/login</code></div></div>
+      <div class="api-tc-row"><div class="api-tc-label">Headers</div><div><code>Content-Type: application/json</code></div></div>
+      <div class="api-tc-row"><div class="api-tc-label">Body</div><div><code>{"email": "admin@juice-sh.op", "password": "wrong"}</code></div></div>
+      <div class="api-tc-row"><div class="api-tc-label">Expected status</div><div><strong>401 Unauthorized</strong></div></div>
+      <div class="api-tc-row"><div class="api-tc-label">Expected body</div><div>Error message stating invalid credentials. No token returned.</div></div>
+    </div>
+  </div>
+
+  <!-- Exercise -->
+  <div class="exercise">
+    <h2>Exercise — Your First API Test Session</h2>
+
+    <p class="task-label">TASK 1 — WARM UP (GET)</p>
+    <p>In Postman, send these two requests and note the status code and what comes back:</p>
+    <ul>
+      <li><span class="url-chip">GET http://192.168.0.202:9058/api/Products</span> — how many products? What status?</li>
+      <li><span class="url-chip">GET http://192.168.0.202:9058/api/Products/1</span> — what product is ID 1? What's its price?</li>
+    </ul>
+
+    <p class="task-label">TASK 2 — NEGATIVE TEST (GET)</p>
+    <ul>
+      <li><span class="url-chip">GET http://192.168.0.202:9058/api/Products/9999</span> — what status code do you get? What does the body say? Is this what you'd expect?</li>
+    </ul>
+
+    <p class="task-label">TASK 3 — POST (LOGIN)</p>
+    <p>Select POST. URL: <span class="url-chip">http://192.168.0.202:9058/rest/user/login</span></p>
+    <p>Go to <strong>Body → raw → JSON</strong> and paste:</p>
+    <pre style="background:#111;color:#a3e635;padding:0.75rem;border-radius:6px;font-size:0.82rem;margin:0.5rem 0">{
+  "email": "admin@juice-sh.op",
+  "password": "admin123"
+}</pre>
+    <p>Click Send. What status do you get? Do you see a token in the response?</p>
+
+    <p class="task-label">TASK 4 — NEGATIVE POST (WRONG PASSWORD)</p>
+    <p>Same endpoint, change the password to <code>"wrongpassword"</code>. What status code comes back? What does the error say?</p>
+
+    <p class="task-label">TASK 5 — FIND A BUG</p>
+    <p>Try this: <span class="url-chip">GET http://192.168.0.202:9058/api/Users</span></p>
+    <p>You are not logged in. What status code do you expect? What status do you actually get? If actual ≠ expected — that's a bug. Note it down.</p>
+
+    <p class="task-label">TASK 6 — REPORT BACK</p>
+    <p>Tell me:</p>
+    <ul>
+      <li>What status came back for <code>/api/Products/9999</code>?</li>
+      <li>Did you get a token from the login POST?</li>
+      <li>What happened with <code>GET /api/Users</code>?</li>
+    </ul>
+  </div>
+
+  <!-- Quiz -->
+  <div class="quiz">
+    <h2>Quick Check — 5 Questions</h2>
+
+    <div class="question" id="q1">
+      <p>1. You send a GET request to <code>/api/Products/99</code> and get a 404. What does this mean?</p>
+      <div class="options">
+        <label><input type="radio" name="q1" value="a"> The server crashed</label>
+        <label><input type="radio" name="q1" value="b"> You are not logged in</label>
+        <label><input type="radio" name="q1" value="c"> No product with ID 99 exists on the server</label>
+        <label><input type="radio" name="q1" value="d"> The request was sent with wrong headers</label>
+      </div>
+    </div>
+
+    <div class="question" id="q2">
+      <p>2. You successfully register a new user via POST. Which status code should the API return?</p>
+      <div class="options">
+        <label><input type="radio" name="q2" value="a"> 200 OK</label>
+        <label><input type="radio" name="q2" value="b"> 201 Created</label>
+        <label><input type="radio" name="q2" value="c"> 204 No Content</label>
+        <label><input type="radio" name="q2" value="d"> 400 Bad Request</label>
+      </div>
+    </div>
+
+    <div class="question" id="q3">
+      <p>3. What is the difference between a 401 and a 403 response?</p>
+      <div class="options">
+        <label><input type="radio" name="q3" value="a"> 401 means server error; 403 means not found</label>
+        <label><input type="radio" name="q3" value="b"> 401 means not authenticated (not logged in); 403 means authenticated but not permitted</label>
+        <label><input type="radio" name="q3" value="c"> They mean the same thing</label>
+        <label><input type="radio" name="q3" value="d"> 401 is a client error; 403 is a server error</label>
+      </div>
+    </div>
+
+    <div class="question" id="q4">
+      <p>4. Why is API testing valuable even when UI testing is also done?</p>
+      <div class="options">
+        <label><input type="radio" name="q4" value="a"> APIs are more colourful and interesting to test</label>
+        <label><input type="radio" name="q4" value="b"> The UI may hide API errors; API testing is faster, catches more edge cases, and can start before the UI is built</label>
+        <label><input type="radio" name="q4" value="c"> UI testing always covers the API automatically</label>
+        <label><input type="radio" name="q4" value="d"> Companies require both for legal compliance</label>
+      </div>
+    </div>
+
+    <div class="question" id="q5">
+      <p>5. A GET request to <code>/api/Orders</code> deletes all orders in the database. Is this a bug?</p>
+      <div class="options">
+        <label><input type="radio" name="q5" value="a"> No — GET can do anything the server wants</label>
+        <label><input type="radio" name="q5" value="b"> Only if the status code is wrong</label>
+        <label><input type="radio" name="q5" value="c"> Yes — GET must never modify or delete data</label>
+        <label><input type="radio" name="q5" value="d"> Only if a user reported it</label>
+      </div>
+    </div>
+
+    <button class="btn" onclick="checkQuiz()">Check My Answers</button>
+    <div class="quiz-result" id="quiz-result"></div>
+  </div>
+
+  <div class="callout interview">
+    <div class="callout-title">What You Can Say After This Lesson</div>
+    <p><em>"I have hands-on API testing experience using Postman. I tested the OWASP Juice Shop REST API — sending GET, POST requests, validating status codes, checking response bodies and response times. I understand the difference between 401 and 403, when to expect a 201 vs 200, and why API testing catches bugs that UI testing misses. I also found a security issue where an unauthenticated user could access a protected endpoint."</em></p>
+  </div>
+
+  <footer class="lesson-footer">
+    <div>
+      <div style="font-weight:700;margin-bottom:0.2rem">Questions?</div>
+      Ask: "What is JSON?" or "How do I add a token to a request?" or "What is a header?"
+    </div>
+    <div>
+      <div style="font-weight:700;margin-bottom:0.4rem">After the exercise:</div>
+      <span style="background:var(--orange);color:#fff;padding:0.5rem 1rem;border-radius:6px;display:inline-block">→ Lesson 06: Test Design Techniques</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+const answers = { q1:'c', q2:'b', q3:'b', q4:'b', q5:'c' };
+function checkQuiz() {
+  let score = 0;
+  for (const [q, correct] of Object.entries(answers)) {
+    const selected = document.querySelector(`input[name="${q}"]:checked`);
+    document.querySelectorAll(`#${q} .options label`).forEach(label => {
+      const input = label.querySelector('input');
+      label.classList.remove('correct','wrong');
+      if (input.value === correct) label.classList.add('correct');
+      else if (selected && input.value === selected.value) label.classList.add('wrong');
+    });
+    if (selected && selected.value === correct) score++;
+  }
+  const r = document.getElementById('quiz-result');
+  r.style.display = 'block';
+  if (score === 5) { r.className='quiz-result pass'; r.textContent='Perfect — 5/5! Open Postman and start the exercise.'; }
+  else if (score >= 3) { r.className='quiz-result pass'; r.textContent=`${score}/5 — Good. Review the highlighted answers then start the exercise.`; }
+  else { r.className='quiz-result fail'; r.textContent=`${score}/5 — Re-read sections 3 and 4 before continuing.`; }
+}
+</script>
+</body>
+</html>

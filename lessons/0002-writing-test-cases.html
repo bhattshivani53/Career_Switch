@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 02 — Writing Test Cases</title>
+  <style>
+    :root {
+      --bg: #fafaf8; --surface: #fff; --border: #e5e5e0;
+      --text: #1a1a1a; --muted: #6b6b6b; --accent: #2563eb;
+      --accent-light: #eff6ff; --green: #16a34a; --green-light: #f0fdf4;
+      --amber: #d97706; --amber-light: #fffbeb; --red: #dc2626;
+      --red-light: #fef2f2; --purple: #7c3aed; --purple-light: #f5f3ff;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); line-height: 1.75; padding: 2rem 1rem; }
+    .page { max-width: 760px; margin: 0 auto; }
+
+    /* Header */
+    .lesson-header { border-bottom: 2px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2.5rem; }
+    .lesson-tag { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent-light); display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.75rem; }
+    h1 { font-size: 1.9rem; line-height: 1.2; margin-bottom: 0.5rem; }
+    .subtitle { font-size: 1.05rem; color: var(--muted); font-style: italic; }
+    .meta { display: flex; gap: 1.5rem; margin-top: 1rem; font-family: sans-serif; font-size: 0.82rem; color: var(--muted); flex-wrap: wrap; }
+
+    /* Typography */
+    h2 { font-size: 1.3rem; margin: 2.5rem 0 0.75rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1rem; margin: 1.5rem 0 0.4rem; color: var(--accent); font-family: sans-serif; font-weight: 700; }
+    p { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; }
+
+    /* Callouts */
+    .callout { border-left: 4px solid; padding: 1rem 1.25rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.5rem 0; }
+    .callout-title { font-family: sans-serif; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+    .callout.analogy { border-color: var(--green); background: var(--green-light); }
+    .callout.analogy .callout-title { color: var(--green); }
+    .callout.insight { border-color: var(--accent); background: var(--accent-light); }
+    .callout.insight .callout-title { color: var(--accent); }
+    .callout.interview { border-color: var(--amber); background: var(--amber-light); }
+    .callout.interview .callout-title { color: var(--amber); }
+    .callout.tool { border-color: var(--purple); background: var(--purple-light); }
+    .callout.tool .callout-title { color: var(--purple); }
+    .callout.warning { border-color: var(--red); background: var(--red-light); }
+    .callout.warning .callout-title { color: var(--red); }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+    th { background: var(--text); color: #fff; text-align: left; padding: 0.65rem 0.9rem; font-family: sans-serif; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:nth-child(even) td { background: #f5f5f3; }
+    tr:last-child td { border-bottom: none; }
+
+    /* Test case card */
+    .tc-card { border: 2px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 1.5rem 0; }
+    .tc-header { background: var(--text); color: #fff; padding: 0.75rem 1.1rem; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; gap: 1rem; align-items: center; }
+    .tc-badge { background: var(--accent); color: #fff; font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 3px; font-family: sans-serif; text-transform: uppercase; letter-spacing: 0.05em; }
+    .tc-badge.neg { background: var(--red); }
+    .tc-body { padding: 0; }
+    .tc-row { display: grid; grid-template-columns: 160px 1fr; border-bottom: 1px solid var(--border); }
+    .tc-row:last-child { border-bottom: none; }
+    .tc-label { background: #f5f5f3; padding: 0.6rem 1rem; font-family: sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--muted); border-right: 1px solid var(--border); }
+    .tc-value { padding: 0.6rem 1rem; font-size: 0.9rem; }
+    .tc-value ol { margin: 0; padding-left: 1.3rem; }
+    .tc-value ol li { margin-bottom: 0.25rem; font-size: 0.88rem; }
+
+    /* Step-by-step guide */
+    .steps-guide { counter-reset: step; margin: 1.5rem 0; }
+    .step { display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: flex-start; }
+    .step-num { counter-increment: step; content: counter(step); background: var(--accent); color: #fff; font-family: sans-serif; font-weight: 700; font-size: 0.85rem; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0.1rem; }
+    .step-num::before { content: counter(step); }
+    .step-content { flex: 1; }
+    .step-content strong { display: block; font-family: sans-serif; font-size: 0.92rem; margin-bottom: 0.2rem; }
+    .step-content p, .step-content ul { margin: 0; font-size: 0.9rem; color: var(--muted); }
+
+    /* Code / path */
+    code { font-family: 'Courier New', monospace; background: #f0f0ed; padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.88em; }
+
+    /* URL chip */
+    .url-chip { display: inline-block; background: #1a1a1a; color: #7dd3fc; font-family: 'Courier New', monospace; font-size: 0.85rem; padding: 0.35rem 0.8rem; border-radius: 6px; margin: 0.25rem 0; }
+
+    /* Exercise */
+    .exercise { background: #1a1a1a; color: #e5e5e0; border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .exercise h2 { color: #fff; border-color: #444; font-size: 1.05rem; }
+    .exercise p, .exercise li { color: #ccc; font-size: 0.92rem; }
+    .exercise strong { color: #fff; }
+    .task-label { font-family: 'Courier New', monospace; font-size: 0.78rem; background: #333; color: #7dd3fc; padding: 0.15rem 0.5rem; border-radius: 3px; display: inline-block; margin: 0.75rem 0 0.4rem; }
+
+    /* Quiz */
+    .quiz { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .quiz h2 { border: none; margin-top: 0; font-size: 1.05rem; }
+    .question { margin-bottom: 1.5rem; }
+    .question p { font-weight: 700; margin-bottom: 0.6rem; font-size: 0.95rem; }
+    .options label { display: block; padding: 0.5rem 0.85rem; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 0.35rem; cursor: pointer; font-family: sans-serif; font-size: 0.9rem; transition: background 0.15s; }
+    .options label:hover { background: var(--accent-light); border-color: var(--accent); }
+    .options input { margin-right: 0.5rem; }
+    .options label.correct { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 700; }
+    .options label.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+    .btn { font-family: sans-serif; font-size: 0.9rem; font-weight: 700; background: var(--accent); color: #fff; border: none; padding: 0.65rem 1.4rem; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #1d4ed8; }
+    .quiz-result { display: none; margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-family: sans-serif; font-weight: 700; }
+    .quiz-result.pass { background: var(--green-light); color: var(--green); }
+    .quiz-result.fail { background: var(--red-light); color: var(--red); }
+
+    /* Footer */
+    .lesson-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 2px solid var(--border); font-family: sans-serif; font-size: 0.85rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header class="lesson-header">
+    <div class="lesson-tag">Lesson 02 of 12 &nbsp;·&nbsp; Test Case Writing</div>
+    <h1>Writing Test Cases on a Real App</h1>
+    <p class="subtitle">From theory to practice — writing professional test cases in YouTrack for the Juice Shop.</p>
+    <div class="meta">
+      <span>⏱ 30–40 minutes</span>
+      <span>🛠 Tools: YouTrack + OWASP Juice Shop</span>
+      <span>✍️ You will write 8 real test cases today</span>
+    </div>
+  </header>
+
+  <!-- ── Section 1 ── -->
+  <h2>1. Your Tools Today</h2>
+
+  <p>From this lesson onwards, you work with real tools — the same ones professional QA teams use every day.</p>
+
+  <div class="callout tool">
+    <div class="callout-title">Your Test Environment</div>
+    <p><strong>App under test:</strong> OWASP Juice Shop (an e-commerce app built with real vulnerabilities for QA practice)<br>
+    <span class="url-chip">http://192.168.0.202:9058</span></p>
+    <p style="margin-top:0.75rem"><strong>Test management tool:</strong> YouTrack with Test Manager<br>
+    <span class="url-chip">https://youtrack.kkunraid.com</span> &nbsp;→ login: <code>sbhatt</code></p>
+    <p style="margin-top:0.75rem"><strong>Your user story for today:</strong> <code>OJS-4</code> — "As a new customer, I want to create an account so that I can buy juices."</p>
+  </div>
+
+  <p>Open both in your browser before continuing. Take 2 minutes to click around the Juice Shop — find the registration page (<code>/#/register</code>). You are about to test it.</p>
+
+  <!-- ── Section 2 ── -->
+  <h2>2. The Anatomy of a Professional Test Case</h2>
+
+  <p>You met the template in Lesson 01. Now here it is in full — with every field explained and why it matters.</p>
+
+  <table>
+    <thead><tr><th>Field</th><th>What it captures</th><th>Why it matters</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Test Case ID</strong></td><td>Unique code: <code>TC_REG_001</code></td><td>Referenced in bug reports and test runs — never changes</td></tr>
+      <tr><td><strong>Title / Summary</strong></td><td>One sentence: what you are testing</td><td>Must be clear enough that someone else knows what to run without reading the steps</td></tr>
+      <tr><td><strong>User Story</strong></td><td>Which story this covers: <code>OJS-4</code></td><td>Links your test to the requirement — traceability</td></tr>
+      <tr><td><strong>Priority</strong></td><td>High / Medium / Low</td><td>Tells the team what to run first when time is short</td></tr>
+      <tr><td><strong>Preconditions</strong></td><td>What must be true before step 1</td><td>Prevents wasted time if the environment isn't ready</td></tr>
+      <tr><td><strong>Test Data</strong></td><td>Exact values to enter</td><td>Makes tests reproducible — no guessing what "valid email" means</td></tr>
+      <tr><td><strong>Steps</strong></td><td>Numbered, atomic actions</td><td>Anyone in the team can follow them cold</td></tr>
+      <tr><td><strong>Expected Result</strong></td><td>What SHOULD happen after the last step</td><td>The pass/fail criterion — without this, you cannot judge a result</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ── Section 3 ── -->
+  <h2>3. Positive vs Negative Testing — The 30/70 Rule</h2>
+
+  <p>Every feature needs both types. A common junior QA mistake is writing only positive tests.</p>
+
+  <table>
+    <thead><tr><th>Type</th><th>Tests what?</th><th>Example for Registration</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Positive</strong><br><em>(Happy Path)</em></td>
+        <td>The feature works correctly when given valid inputs</td>
+        <td>Register with a valid email and a password that meets all requirements → account created</td>
+      </tr>
+      <tr>
+        <td><strong>Negative</strong><br><em>(Sad Path)</em></td>
+        <td>The system handles invalid inputs and errors gracefully</td>
+        <td>Register with an already-used email → clear error message shown, no duplicate account created</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout insight">
+    <div class="callout-title">The 30/70 Rule</div>
+    <p>Aim for roughly <strong>30% positive tests, 70% negative tests</strong>. The happy path is the one path developers tested themselves. Bugs live in the edges — invalid inputs, empty fields, unexpected sequences. That's where QA adds the most value.</p>
+  </div>
+
+  <div class="callout analogy">
+    <div class="callout-title">Healthcare Parallel</div>
+    <p>In healthcare, you don't just check that the medication works for a typical adult patient. You check what happens for a patient with allergies, an elderly patient on other medications, a patient who refuses the dose, a patient who double-doses. The "normal" case is easy — the edge cases protect people.</p>
+  </div>
+
+  <!-- ── Section 4 ── -->
+  <h2>4. Example: Two Test Cases for Registration</h2>
+
+  <p>Here is what a professional test case looks like for <code>OJS-4</code>. Study these before writing your own.</p>
+
+  <div class="tc-card">
+    <div class="tc-header">
+      <span>TC_REG_001</span>
+      <span class="tc-badge">Positive</span>
+    </div>
+    <div class="tc-body">
+      <div class="tc-row"><div class="tc-label">Title</div><div class="tc-value">Verify successful registration with valid email, password, and security question</div></div>
+      <div class="tc-row"><div class="tc-label">User Story</div><div class="tc-value">OJS-4</div></div>
+      <div class="tc-row"><div class="tc-label">Priority</div><div class="tc-value">High</div></div>
+      <div class="tc-row"><div class="tc-label">Preconditions</div><div class="tc-value">Juice Shop is accessible at http://192.168.0.202:9058. The email <code>testuser1@qa.com</code> is not already registered.</div></div>
+      <div class="tc-row"><div class="tc-label">Test Data</div><div class="tc-value">Email: <code>testuser1@qa.com</code> &nbsp;|&nbsp; Password: <code>Test@1234</code> &nbsp;|&nbsp; Security Q: "Your eldest sibling's middle name?" &nbsp;|&nbsp; Answer: <code>Priya</code></div></div>
+      <div class="tc-row"><div class="tc-label">Steps</div><div class="tc-value"><ol>
+        <li>Navigate to <code>http://192.168.0.202:9058/#/register</code></li>
+        <li>Enter <code>testuser1@qa.com</code> in the Email field</li>
+        <li>Enter <code>Test@1234</code> in the Password field</li>
+        <li>Enter <code>Test@1234</code> in the Repeat Password field</li>
+        <li>Select "Your eldest sibling's middle name?" from the Security Question dropdown</li>
+        <li>Enter <code>Priya</code> in the Security Answer field</li>
+        <li>Click the "Register" button</li>
+      </ol></div></div>
+      <div class="tc-row"><div class="tc-label">Expected Result</div><div class="tc-value">User is redirected to the Login page. A success message is displayed confirming registration. No error messages appear.</div></div>
+    </div>
+  </div>
+
+  <div class="tc-card" style="border-color:#fca5a5">
+    <div class="tc-header">
+      <span>TC_REG_003</span>
+      <span class="tc-badge neg">Negative</span>
+    </div>
+    <div class="tc-body">
+      <div class="tc-row"><div class="tc-label">Title</div><div class="tc-value">Verify error message when registering with an already-registered email address</div></div>
+      <div class="tc-row"><div class="tc-label">User Story</div><div class="tc-value">OJS-4</div></div>
+      <div class="tc-row"><div class="tc-label">Priority</div><div class="tc-value">High</div></div>
+      <div class="tc-row"><div class="tc-label">Preconditions</div><div class="tc-value">Juice Shop is accessible. The email <code>admin@juice-sh.op</code> is already registered in the system.</div></div>
+      <div class="tc-row"><div class="tc-label">Test Data</div><div class="tc-value">Email: <code>admin@juice-sh.op</code> &nbsp;|&nbsp; Password: <code>Test@1234</code></div></div>
+      <div class="tc-row"><div class="tc-label">Steps</div><div class="tc-value"><ol>
+        <li>Navigate to <code>http://192.168.0.202:9058/#/register</code></li>
+        <li>Enter <code>admin@juice-sh.op</code> in the Email field</li>
+        <li>Enter <code>Test@1234</code> in the Password and Repeat Password fields</li>
+        <li>Select any security question and enter any answer</li>
+        <li>Click the "Register" button</li>
+      </ol></div></div>
+      <div class="tc-row"><div class="tc-label">Expected Result</div><div class="tc-value">Registration fails. An error message is displayed stating the email is already in use. No duplicate account is created.</div></div>
+    </div>
+  </div>
+
+  <!-- ── Section 5 ── -->
+  <h2>5. How to Enter Test Cases in YouTrack Test Manager</h2>
+
+  <div class="steps-guide">
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <strong>Go to Test Manager</strong>
+        <p>Log into YouTrack → click <strong>Test Manager</strong> in the left sidebar → select <strong>OWASP Juice Shop</strong> repository → click <strong>All test cases</strong>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <strong>Create a Test Suite first</strong>
+        <p>Click <strong>All test suites</strong> → <strong>New test suite</strong> → name it <code>OJS-4 Registration</code>. A test suite groups related test cases — like a folder.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <strong>Create your first test case</strong>
+        <p>Click <strong>New test case</strong> (top right). In the form that opens, enter the Summary (title). Look for a <strong>Steps</strong> section — add each step with its expected result inline, or use the description field for the full template.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <strong>Link to the user story</strong>
+        <p>In the test case, look for a <strong>Related issues</strong> or <strong>Links</strong> field. Link it to <code>OJS-4</code>. This is traceability — it proves your test covers that requirement.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <strong>Save and repeat</strong>
+        <p>Save your first test case. Then repeat for each test case below. It gets faster each time.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout tool">
+    <div class="callout-title">YouTrack Tip</div>
+    <p>If YouTrack's Test Manager doesn't have all the fields you expect, use the <strong>Description</strong> field to paste your full test case in the template format. What matters is that the steps and expected result are clear — the exact fields are tool-dependent.</p>
+  </div>
+
+  <!-- ── Exercise ── -->
+  <div class="exercise">
+    <h2>Exercise — Write 8 Test Cases for OJS-4 (Registration)</h2>
+
+    <p>First: open the Juice Shop registration page and spend 5 minutes clicking around it. Notice every field, every button, every message. Think: <em>"What could go wrong here?"</em></p>
+
+    <p class="task-label">TASK 1 — TEST ON THE APP</p>
+    <p>Go to <code>http://192.168.0.202:9058/#/register</code>. Try each of these manually and note what happens:</p>
+    <ul>
+      <li>Register with a completely valid email and password</li>
+      <li>Leave the email field blank and try to register</li>
+      <li>Enter a password that is only 2 characters long</li>
+      <li>Enter different values in Password and Repeat Password</li>
+    </ul>
+
+    <p class="task-label">TASK 2 — WRITE THESE 8 TEST CASES</p>
+    <p>Use the template from Section 2. Enter all 8 into YouTrack Test Manager under suite <code>OJS-4 Registration</code>.</p>
+
+    <table style="border-collapse:collapse;width:100%;margin:0.75rem 0;">
+      <thead><tr style="background:#333"><th style="padding:0.5rem 0.7rem;color:#fff;font-size:0.78rem;text-align:left">ID</th><th style="padding:0.5rem 0.7rem;color:#fff;font-size:0.78rem;text-align:left">What to test</th><th style="padding:0.5rem 0.7rem;color:#fff;font-size:0.78rem;text-align:left">Type</th></tr></thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #444"><td style="padding:0.45rem 0.7rem;color:#7dd3fc;font-family:monospace">TC_REG_001</td><td style="padding:0.45rem 0.7rem;color:#ccc">Valid registration — all fields correct</td><td style="padding:0.45rem 0.7rem;color:#86efac">Positive</td></tr>
+        <tr style="border-bottom:1px solid #444"><td style="padding:0.45rem 0.7rem;color:#7dd3fc;font-family:monospace">TC_REG_002</td><td style="padding:0.45rem 0.7rem;color:#ccc">Empty email field</td><td style="padding:0.45rem 0.7rem;color:#fca5a5">Negative</td></tr>
+        <tr style="border-bottom:1px solid #444"><td style="padding:0.45rem 0.7rem;color:#7dd3fc;font-family:monospace">TC_REG_003</td><td style="padding:0.45rem 0.7rem;color:#ccc">Already-registered email</td><td style="padding:0.45rem 0.7rem;color:#fca5a5">Negative</td></tr>
+        <tr style="border-bottom:1px solid #444"><td style="padding:0.45rem 0.7rem;color:#7dd3fc;font-family:monospace">TC_REG_004</td><td style="padding:0.45rem 0.7rem;color:#ccc">Invalid email format (e.g. "shivani" with no @)</td><td style="padding:0.45rem 0.7rem;color:#fca5a5">Negative</td></tr>
+        <tr style="border-bottom:1px solid #444"><td style="padding:0.45rem 0.7rem;color:#7dd3fc;font-family:monospace">TC_REG_005</td><td style="padding:0.45rem 0.7rem;color:#ccc">Password too short (1–4 characters)</td><td style="padding:0.45rem 0.7rem;color:#fca5a5">Negative</td></tr>
+        <tr style="border-bottom:1px solid #444"><td style="padding:0.45rem 0.7rem;color:#7dd3fc;font-family:monospace">TC_REG_006</td><td style="padding:0.45rem 0.7rem;color:#ccc">Password and Repeat Password don't match</td><td style="padding:0.45rem 0.7rem;color:#fca5a5">Negative</td></tr>
+        <tr style="border-bottom:1px solid #444"><td style="padding:0.45rem 0.7rem;color:#7dd3fc;font-family:monospace">TC_REG_007</td><td style="padding:0.45rem 0.7rem;color:#ccc">No security question selected</td><td style="padding:0.45rem 0.7rem;color:#fca5a5">Negative</td></tr>
+        <tr><td style="padding:0.45rem 0.7rem;color:#7dd3fc;font-family:monospace">TC_REG_008</td><td style="padding:0.45rem 0.7rem;color:#ccc">All fields left completely empty</td><td style="padding:0.45rem 0.7rem;color:#fca5a5">Negative</td></tr>
+      </tbody>
+    </table>
+
+    <p class="task-label">TASK 3 — ACTUALLY TEST EACH ONE</p>
+    <p>Execute each test case on the Juice Shop. Note the actual result. Mark each one <strong>Pass</strong> or <strong>Fail</strong> in YouTrack. If actual ≠ expected → that's a bug. Don't raise it yet — you'll learn bug reporting in Lesson 04.</p>
+
+    <p class="task-label">TASK 4 — SCREENSHOT OR NOTE</p>
+    <p>Take a screenshot of your YouTrack Test Manager showing the 8 test cases you entered. Send it here — or just tell me what you found (any Pass/Fail surprises?).</p>
+  </div>
+
+  <!-- ── Quiz ── -->
+  <div class="quiz">
+    <h2>Quick Check — 4 Questions</h2>
+    <p style="font-family:sans-serif;font-size:0.86rem;color:var(--muted);margin-bottom:1.25rem">Check your understanding before moving to the exercise.</p>
+
+    <div class="question" id="q1">
+      <p>1. You are testing a registration form. Which of these is a NEGATIVE test?</p>
+      <div class="options">
+        <label><input type="radio" name="q1" value="a"> Register with a valid email and a strong password</label>
+        <label><input type="radio" name="q1" value="b"> Register with no email entered</label>
+        <label><input type="radio" name="q1" value="c"> Register and then log in successfully</label>
+        <label><input type="radio" name="q1" value="d"> Register and check the welcome email arrives</label>
+      </div>
+    </div>
+
+    <div class="question" id="q2">
+      <p>2. The "Expected Result" in a test case is written:</p>
+      <div class="options">
+        <label><input type="radio" name="q2" value="a"> After you run the test, based on what happened</label>
+        <label><input type="radio" name="q2" value="b"> Before you run the test, based on the requirements</label>
+        <label><input type="radio" name="q2" value="c"> By the developer, not the QA</label>
+        <label><input type="radio" name="q2" value="d"> Only when the test fails</label>
+      </div>
+    </div>
+
+    <div class="question" id="q3">
+      <p>3. Why is it important to specify exact test data (e.g. "testuser1@qa.com") rather than just saying "a valid email"?</p>
+      <div class="options">
+        <label><input type="radio" name="q3" value="a"> It makes the test case look more professional</label>
+        <label><input type="radio" name="q3" value="b"> It ensures the test is reproducible — anyone running it uses the same inputs</label>
+        <label><input type="radio" name="q3" value="c"> Developers need to see real data to fix bugs</label>
+        <label><input type="radio" name="q3" value="d"> YouTrack requires specific data to save the test case</label>
+      </div>
+    </div>
+
+    <div class="question" id="q4">
+      <p>4. Linking a test case to user story OJS-4 in YouTrack is called:</p>
+      <div class="options">
+        <label><input type="radio" name="q4" value="a"> Bug tracking</label>
+        <label><input type="radio" name="q4" value="b"> Test execution</label>
+        <label><input type="radio" name="q4" value="c"> Traceability</label>
+        <label><input type="radio" name="q4" value="d"> Regression testing</label>
+      </div>
+    </div>
+
+    <button class="btn" onclick="checkQuiz()">Check My Answers</button>
+    <div class="quiz-result" id="quiz-result"></div>
+  </div>
+
+  <!-- ── Interview note ── -->
+  <div class="callout interview">
+    <div class="callout-title">Interview Gold — What You Can Say After This Lesson</div>
+    <p><em>"I have hands-on experience writing and executing test cases in YouTrack Test Manager. I tested the user registration feature of a web application — I wrote 8 test cases covering positive and negative scenarios including boundary values, empty fields, duplicate email, and password mismatch. I executed each test case against the live application and recorded actual results."</em></p>
+    <p style="margin:0">That is a concrete, credible answer to "Do you have any testing experience?" — even before your first job.</p>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="lesson-footer">
+    <div>
+      <div style="font-weight:700;margin-bottom:0.2rem">Questions?</div>
+      Ask: "Why do we need preconditions?" or "What if I can't tell if it passed or failed?"
+    </div>
+    <div>
+      <div style="font-weight:700;margin-bottom:0.4rem">When you've entered all 8 test cases:</div>
+      <span style="background:var(--accent);color:#fff;padding:0.5rem 1rem;border-radius:6px;display:inline-block">→ Lesson 03: The Bug Life Cycle</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+const answers = { q1:'b', q2:'b', q3:'b', q4:'c' };
+function checkQuiz() {
+  let score = 0;
+  for (const [q, correct] of Object.entries(answers)) {
+    const selected = document.querySelector(`input[name="${q}"]:checked`);
+    document.querySelectorAll(`#${q} .options label`).forEach(label => {
+      const input = label.querySelector('input');
+      label.classList.remove('correct','wrong');
+      if (input.value === correct) label.classList.add('correct');
+      else if (selected && input.value === selected.value) label.classList.add('wrong');
+    });
+    if (selected && selected.value === correct) score++;
+  }
+  const r = document.getElementById('quiz-result');
+  r.style.display = 'block';
+  if (score === 4) { r.className='quiz-result pass'; r.textContent='Perfect — 4/4! Go straight to the exercise.'; }
+  else if (score >= 2) { r.className='quiz-result pass'; r.textContent=`${score}/4 — Good. Review the highlighted answers, then start the exercise.`; }
+  else { r.className='quiz-result fail'; r.textContent=`${score}/4 — Re-read sections 3 and 4 before continuing.`; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 04 — Agile &amp; Scrum</title>
+  <style>
+    :root {
+      --bg: #fafaf8; --surface: #fff; --border: #e5e5e0;
+      --text: #1a1a1a; --muted: #6b6b6b; --accent: #2563eb;
+      --accent-light: #eff6ff; --green: #16a34a; --green-light: #f0fdf4;
+      --amber: #d97706; --amber-light: #fffbeb; --red: #dc2626;
+      --red-light: #fef2f2; --purple: #7c3aed; --purple-light: #f5f3ff;
+      --teal: #0d9488; --teal-light: #f0fdfa;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); line-height: 1.75; padding: 2rem 1rem; }
+    .page { max-width: 760px; margin: 0 auto; }
+
+    .lesson-header { border-bottom: 2px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2.5rem; }
+    .lesson-tag { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent-light); display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.75rem; }
+    h1 { font-size: 1.9rem; line-height: 1.2; margin-bottom: 0.5rem; }
+    .subtitle { font-size: 1.05rem; color: var(--muted); font-style: italic; }
+    .meta { display: flex; gap: 1.5rem; margin-top: 1rem; font-family: sans-serif; font-size: 0.82rem; color: var(--muted); flex-wrap: wrap; }
+
+    h2 { font-size: 1.3rem; margin: 2.5rem 0 0.75rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1rem; margin: 1.5rem 0 0.4rem; color: var(--accent); font-family: sans-serif; font-weight: 700; }
+    p { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; }
+    code { font-family: 'Courier New', monospace; background: #f0f0ed; padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.88em; }
+    strong { font-weight: 700; }
+
+    .callout { border-left: 4px solid; padding: 1rem 1.25rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.5rem 0; }
+    .callout-title { font-family: sans-serif; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+    .callout.analogy { border-color: var(--green); background: var(--green-light); }
+    .callout.analogy .callout-title { color: var(--green); }
+    .callout.insight { border-color: var(--accent); background: var(--accent-light); }
+    .callout.insight .callout-title { color: var(--accent); }
+    .callout.interview { border-color: var(--amber); background: var(--amber-light); }
+    .callout.interview .callout-title { color: var(--amber); }
+    .callout.tool { border-color: var(--purple); background: var(--purple-light); }
+    .callout.tool .callout-title { color: var(--purple); }
+    .callout.teal { border-color: var(--teal); background: var(--teal-light); }
+    .callout.teal .callout-title { color: var(--teal); }
+
+    table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+    th { background: var(--text); color: #fff; text-align: left; padding: 0.65rem 0.9rem; font-family: sans-serif; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:nth-child(even) td { background: #f5f5f3; }
+    tr:last-child td { border-bottom: none; }
+
+    /* Sprint board */
+    .board { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem 0 1rem; margin: 1.5rem 0; }
+    .col { min-width: 120px; flex: 1; }
+    .col-header { font-family: sans-serif; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; padding: 0.4rem 0.6rem; border-radius: 5px 5px 0 0; text-align: center; }
+    .col-body { background: #f5f5f3; border-radius: 0 0 5px 5px; min-height: 80px; padding: 0.4rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 0.45rem 0.55rem; margin-bottom: 0.4rem; font-size: 0.78rem; font-family: sans-serif; }
+    .card.bug { border-left: 3px solid var(--red); }
+    .card.story { border-left: 3px solid var(--accent); }
+    .card.qa-col { border-left: 3px solid var(--purple); }
+    .card-id { font-family: 'Courier New', monospace; font-size: 0.7rem; color: var(--muted); }
+    .h-todo { background: #e5e7eb; color: #374151; }
+    .h-inprog { background: #bfdbfe; color: #1e40af; }
+    .h-review { background: #fde68a; color: #92400e; }
+    .h-testing { background: #c4b5fd; color: #4c1d95; }
+    .h-verified { background: #bbf7d0; color: #14532d; }
+    .h-release { background: #6ee7b7; color: #064e3b; }
+
+    /* Scrum roles */
+    .roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.25rem 0; }
+    .role-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; text-align: center; }
+    .role-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+    .role-name { font-family: sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.3rem; }
+    .role-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+    /* Ceremonies timeline */
+    .ceremonies { margin: 1.5rem 0; }
+    .ceremony { display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: flex-start; }
+    .ceremony-day { font-family: sans-serif; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; background: var(--accent); color: #fff; padding: 0.3rem 0.5rem; border-radius: 4px; white-space: nowrap; flex-shrink: 0; min-width: 70px; text-align: center; margin-top: 0.15rem; }
+    .ceremony-day.daily { background: var(--teal); }
+    .ceremony-day.review { background: var(--purple); }
+    .ceremony-day.retro { background: var(--amber); }
+    .ceremony-content strong { font-family: sans-serif; font-size: 0.92rem; display: block; margin-bottom: 0.2rem; }
+    .ceremony-content p { margin: 0; font-size: 0.9rem; color: var(--muted); }
+    .ceremony-qa { display: inline-block; margin-top: 0.3rem; font-family: sans-serif; font-size: 0.78rem; background: var(--purple-light); color: var(--purple); padding: 0.15rem 0.5rem; border-radius: 3px; border: 1px solid #ddd6fe; }
+
+    /* User story card */
+    .story-card { border: 2px solid var(--accent); border-radius: var(--radius); overflow: hidden; margin: 1.5rem 0; }
+    .story-header { background: var(--accent); color: #fff; padding: 0.65rem 1rem; font-family: 'Courier New', monospace; font-size: 0.85rem; }
+    .story-body { padding: 1rem; font-size: 0.92rem; }
+    .story-body .as-a { font-style: italic; font-size: 1rem; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+    .ac-item { display: flex; gap: 0.6rem; margin-bottom: 0.5rem; align-items: flex-start; }
+    .ac-num { font-family: 'Courier New', monospace; font-size: 0.75rem; background: var(--accent-light); color: var(--accent); padding: 0.1rem 0.35rem; border-radius: 3px; flex-shrink: 0; margin-top: 0.15rem; font-weight: 700; }
+    .ac-text { font-size: 0.88rem; }
+
+    /* Exercise */
+    .exercise { background: #1a1a1a; color: #e5e5e0; border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .exercise h2 { color: #fff; border-color: #444; font-size: 1.05rem; margin-top: 0; }
+    .exercise p, .exercise li { color: #ccc; font-size: 0.92rem; }
+    .exercise strong { color: #fff; }
+    .task-label { font-family: 'Courier New', monospace; font-size: 0.78rem; background: #333; color: #7dd3fc; padding: 0.15rem 0.5rem; border-radius: 3px; display: inline-block; margin: 0.75rem 0 0.4rem; }
+
+    /* Quiz */
+    .quiz { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .quiz h2 { border: none; margin-top: 0; font-size: 1.05rem; }
+    .question { margin-bottom: 1.5rem; }
+    .question p { font-weight: 700; margin-bottom: 0.6rem; font-size: 0.95rem; }
+    .options label { display: block; padding: 0.5rem 0.85rem; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 0.35rem; cursor: pointer; font-family: sans-serif; font-size: 0.9rem; transition: background 0.15s; }
+    .options label:hover { background: var(--accent-light); border-color: var(--accent); }
+    .options input { margin-right: 0.5rem; }
+    .options label.correct { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 700; }
+    .options label.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+    .btn { font-family: sans-serif; font-size: 0.9rem; font-weight: 700; background: var(--accent); color: #fff; border: none; padding: 0.65rem 1.4rem; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #1d4ed8; }
+    .quiz-result { display: none; margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-family: sans-serif; font-weight: 700; }
+    .quiz-result.pass { background: var(--green-light); color: var(--green); }
+    .quiz-result.fail { background: var(--red-light); color: var(--red); }
+
+    .lesson-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 2px solid var(--border); font-family: sans-serif; font-size: 0.85rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
+
+    @media (max-width: 520px) {
+      .roles { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header class="lesson-header">
+    <div class="lesson-tag">Lesson 04 of 12 &nbsp;·&nbsp; Agile &amp; Scrum</div>
+    <h1>Agile &amp; Scrum — Your Role as QA in a Sprint</h1>
+    <p class="subtitle">The board you've been using explained — and how to talk about Agile fluently in any interview.</p>
+    <div class="meta">
+      <span>⏱ 30–40 minutes</span>
+      <span>🛠 Your YouTrack board throughout</span>
+      <span>✍️ Write acceptance criteria for a real user story</span>
+    </div>
+  </header>
+
+  <!-- Section 1 -->
+  <h2>1. Why Agile Replaced Waterfall</h2>
+
+  <p>The old way of building software — <strong>Waterfall</strong> — worked like this: gather all requirements upfront → design everything → build everything → test everything → release. Months or years later.</p>
+
+  <p>The problem: by the time software reached users, requirements had changed, bugs were expensive to fix, and teams had been working in silos for months without feedback.</p>
+
+  <p><strong>Agile</strong> flips this. Instead of one big delivery, you work in short cycles (sprints) of 1–4 weeks, delivering working software frequently, getting feedback early, and adapting as you go.</p>
+
+  <div class="callout analogy">
+    <div class="callout-title">Healthcare Parallel</div>
+    <p><strong>Waterfall</strong> = designing an entire hospital wing, building it fully, then asking patients if it works.<br>
+    <strong>Agile</strong> = opening one ward, getting patient and staff feedback after each week, adjusting the next ward based on what you learned.</p>
+    <p style="margin:0">Healthcare has been doing iterative improvement for decades (Plan-Do-Study-Act cycles). Agile is the same principle applied to software.</p>
+  </div>
+
+  <!-- Section 2 -->
+  <h2>2. Scrum — The Most Common Agile Framework</h2>
+
+  <p>Scrum is a specific way of implementing Agile. Most UK tech companies use Scrum or something very close to it. When an interviewer says "Agile", they almost always mean Scrum.</p>
+
+  <p>Scrum has three things: <strong>Roles</strong>, <strong>Ceremonies</strong>, and <strong>Artifacts</strong>.</p>
+
+  <div class="roles">
+    <div class="role-card">
+      <div class="role-icon">🎯</div>
+      <div class="role-name">Product Owner</div>
+      <div class="role-desc">Represents the business. Owns the backlog. Decides what gets built and in what order. Writes user stories.</div>
+    </div>
+    <div class="role-card">
+      <div class="role-icon">🛡</div>
+      <div class="role-name">Scrum Master</div>
+      <div class="role-desc">Facilitates Scrum ceremonies. Removes blockers. Does not manage the team — coaches them.</div>
+    </div>
+    <div class="role-card">
+      <div class="role-icon">⚙️</div>
+      <div class="role-name">Development Team</div>
+      <div class="role-desc">Developers, QA engineers, designers — everyone who builds and verifies the product. Cross-functional. Self-organising. <strong>This is you.</strong></div>
+    </div>
+  </div>
+
+  <div class="callout insight">
+    <div class="callout-title">Important</div>
+    <p>In Scrum, <strong>QA is part of the Development Team</strong> — not a separate department. You sit with developers, attend the same ceremonies, and are responsible for quality throughout the sprint — not just at the end.</p>
+  </div>
+
+  <!-- Section 3 -->
+  <h2>3. The Sprint Cycle — Two Weeks in the Life of a QA</h2>
+
+  <p>A <strong>sprint</strong> is a fixed time-box — usually 2 weeks. At the end, the team delivers a working, tested increment of software.</p>
+
+  <div class="ceremonies">
+    <div class="ceremony">
+      <div class="ceremony-day">Day 1<br>Planning</div>
+      <div class="ceremony-content">
+        <strong>Sprint Planning</strong>
+        <p>Team selects stories from the backlog to work on this sprint. Estimates effort. Commits to a sprint goal.</p>
+        <span class="ceremony-qa">QA's role: Review stories for testability. Flag missing acceptance criteria. Ask "how will we know this is done?"</span>
+      </div>
+    </div>
+    <div class="ceremony">
+      <div class="ceremony-day daily">Every day<br>Standup</div>
+      <div class="ceremony-content">
+        <strong>Daily Standup (15 minutes)</strong>
+        <p>Each person answers: Yesterday? Today? Any blockers?</p>
+        <span class="ceremony-qa">QA's role: Report test progress, flag if a build is not ready for testing, raise blockers early.</span>
+      </div>
+    </div>
+    <div class="ceremony">
+      <div class="ceremony-day">Days 2–9<br>The Sprint</div>
+      <div class="ceremony-content">
+        <strong>Development + Testing</strong>
+        <p>Developers build features. QA tests them as they come off the development line — not all at the end.</p>
+        <span class="ceremony-qa">QA's role: Write test cases, execute tests, raise bugs, retest fixes, update the board.</span>
+      </div>
+    </div>
+    <div class="ceremony">
+      <div class="ceremony-day review">Day 10<br>Review</div>
+      <div class="ceremony-content">
+        <strong>Sprint Review (Demo)</strong>
+        <p>Team demonstrates completed, working features to stakeholders. Gets feedback.</p>
+        <span class="ceremony-qa">QA's role: Confirm which stories are truly "done" (passed testing). Support the demo environment.</span>
+      </div>
+    </div>
+    <div class="ceremony">
+      <div class="ceremony-day retro">Day 10<br>Retro</div>
+      <div class="ceremony-content">
+        <strong>Retrospective</strong>
+        <p>Team reflects privately: What went well? What didn't? What will we change next sprint?</p>
+        <span class="ceremony-qa">QA's role: Raise testing process issues (e.g., "builds arrived too late", "no test data available"). Suggest process improvements.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4 -->
+  <h2>4. Your YouTrack Board — Explained in Scrum Terms</h2>
+
+  <p>You have been using this board since Lesson 02. Here is what each column means in Scrum:</p>
+
+  <div class="board">
+    <div class="col">
+      <div class="col-header h-todo">To Do</div>
+      <div class="col-body">
+        <div class="card story"><div class="card-id">OJS-4</div>Sprint backlog — committed this sprint, not started</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-header h-inprog">In Progress</div>
+      <div class="col-body">
+        <div class="card story"><div class="card-id">OJS-5</div>Developer is building this feature right now</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-header h-review">Ready for Review</div>
+      <div class="col-body">
+        <div class="card story">Code written — waiting for peer code review</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-header h-testing">Ready for Testing</div>
+      <div class="col-body">
+        <div class="card qa-col">👈 <strong>QA picks up here.</strong> Feature is built and reviewed — your queue.</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-header h-verified">Verified</div>
+      <div class="col-body">
+        <div class="card story">QA tested and signed off. Ready for sprint review.</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-header h-release">To Release</div>
+      <div class="col-body">
+        <div class="card story">Approved for deployment to production.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout tool">
+    <div class="callout-title">Your Board Right Now</div>
+    <p>OJS-4, OJS-5, OJS-6 are your user stories in <strong>To Do</strong>. OJS-128 (your SQL injection bug) is in <strong>In Progress</strong>. Your 21 verified test cases are in <strong>Verified</strong>. You have been doing real sprint work without realising it.</p>
+  </div>
+
+  <!-- Section 5 -->
+  <h2>5. User Stories &amp; Acceptance Criteria</h2>
+
+  <p>A <strong>user story</strong> is a requirement written from the user's point of view:</p>
+  <blockquote style="border-left:3px solid var(--border);padding:0.5rem 1rem;color:var(--muted);font-style:italic;margin:0.75rem 0">"As a [type of user], I want [a feature] so that [a benefit]."</blockquote>
+
+  <p>But a user story alone is not enough to test against. It needs <strong>Acceptance Criteria (AC)</strong> — the specific conditions that must be true for the story to be considered done. <strong>This is QA's input during Sprint Planning.</strong></p>
+
+  <div class="story-card">
+    <div class="story-header">OJS-4 — User Story + Acceptance Criteria (example)</div>
+    <div class="story-body">
+      <div class="as-a">"As a new customer, I want to create an account so that I can buy juices."</div>
+      <p style="font-family:sans-serif;font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.6rem">Acceptance Criteria</p>
+      <div class="ac-item"><div class="ac-num">AC1</div><div class="ac-text">Given a new user visits /register, when they enter a valid email, password (min 5 chars), security question and answer, and click Register — then they are redirected to the login page and a success message is shown.</div></div>
+      <div class="ac-item"><div class="ac-num">AC2</div><div class="ac-text">Given a user enters an email already registered in the system, when they click Register — then registration is rejected and an error message is shown. No duplicate account is created.</div></div>
+      <div class="ac-item"><div class="ac-num">AC3</div><div class="ac-text">Given a user enters an invalid email format (no @), when they try to submit — then an inline validation error is shown and submission is blocked.</div></div>
+      <div class="ac-item"><div class="ac-num">AC4</div><div class="ac-text">Given a user enters mismatched password and repeat password, when they try to submit — then an inline error is shown and submission is blocked.</div></div>
+      <div class="ac-item"><div class="ac-num">AC5</div><div class="ac-text">Given a user submits the form with any required field empty, when they click Register — then validation errors are shown for each empty field and submission is blocked.</div></div>
+    </div>
+  </div>
+
+  <div class="callout insight">
+    <div class="callout-title">The Connection to Your Test Cases</div>
+    <p>Notice that your 10 test cases from Lesson 02 directly map to these acceptance criteria. AC1 = TC_REG_001. AC2 = TC_REG_003. AC3 = TC_REG_004. This is intentional — <strong>acceptance criteria are the bridge between requirements and test cases.</strong> One AC → one or more test cases.</p>
+  </div>
+
+  <h3>The Given / When / Then Format</h3>
+  <p>Professional QAs write acceptance criteria in this format — it makes them immediately testable:</p>
+  <table>
+    <thead><tr><th>Part</th><th>What it captures</th><th>Maps to test case field</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Given</strong></td><td>The starting state / precondition</td><td>Preconditions</td></tr>
+      <tr><td><strong>When</strong></td><td>The action performed</td><td>Test Steps</td></tr>
+      <tr><td><strong>Then</strong></td><td>The expected outcome</td><td>Expected Result</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 6 -->
+  <h2>6. Definition of Done (DoD)</h2>
+
+  <p>The <strong>Definition of Done</strong> is a shared checklist agreed by the whole team. A story is only "Done" when every item on this list is true — not just when the developer says it's finished.</p>
+
+  <table>
+    <thead><tr><th>DoD Item</th><th>Who checks it</th></tr></thead>
+    <tbody>
+      <tr><td>Code written and peer-reviewed</td><td>Developer + peer</td></tr>
+      <tr><td>Unit tests written and passing</td><td>Developer</td></tr>
+      <tr><td>Test cases written and executed</td><td><strong>QA</strong></td></tr>
+      <tr><td>All bugs raised during testing fixed and verified</td><td><strong>QA</strong></td></tr>
+      <tr><td>Acceptance criteria all met</td><td><strong>QA</strong></td></tr>
+      <tr><td>No open Critical or Major bugs</td><td><strong>QA</strong></td></tr>
+      <tr><td>Product Owner signed off</td><td>Product Owner</td></tr>
+    </tbody>
+  </table>
+
+  <p>QA controls the last gate. A story cannot move to "To Release" without QA sign-off. That is the weight of the role.</p>
+
+  <!-- Section 7 — Interview Q&A -->
+  <h2>7. Interview Questions for This Topic</h2>
+
+  <div class="callout interview">
+    <div class="callout-title">Q: "Tell me about your experience working in an Agile team."</div>
+    <p><em>"I've been practising QA in a Scrum environment using YouTrack. I'm familiar with the full sprint cycle — from Sprint Planning where I review user stories and write acceptance criteria, through daily standups, to executing tests as features come off the development line, and contributing to retrospectives. I understand that QA in Agile means testing continuously throughout the sprint rather than waiting until the end — and that we're part of the Development Team, responsible for quality alongside developers."</em></p>
+  </div>
+
+  <div class="callout interview">
+    <div class="callout-title">Q: "What is the difference between Agile and Waterfall?"</div>
+    <p><em>"Waterfall is sequential — all requirements gathered upfront, then design, then build, then test, then release. Changes are expensive late in the cycle. Agile is iterative — you work in short sprints, delivering working software frequently and incorporating feedback continuously. QA is integrated throughout rather than being a phase at the end. Agile catches defects earlier and adapts to changing requirements far more effectively."</em></p>
+  </div>
+
+  <div class="callout interview">
+    <div class="callout-title">Q: "What does QA do during Sprint Planning?"</div>
+    <p><em>"During Sprint Planning, QA reviews user stories for testability — checking that acceptance criteria are clear, specific, and measurable. If a story says 'the search should be fast', I'd push back and ask 'fast means what — under 2 seconds?' I also flag stories that are missing acceptance criteria entirely, because without them there's no agreed definition of done. And I help estimate testing effort so the sprint commitment is realistic."</em></p>
+  </div>
+
+  <!-- Exercise -->
+  <div class="exercise">
+    <h2>Exercise — Write Acceptance Criteria for OJS-5</h2>
+
+    <p>Your user story is already on the board:</p>
+    <p style="font-style:italic;color:#7dd3fc;margin:0.5rem 0 1rem">"As a shopper, I want to search for items so I can quickly find my favourite juices."</p>
+
+    <p class="task-label">STEP 1 — EXPLORE THE FEATURE</p>
+    <p>Open the Juice Shop (<code>http://192.168.0.202:9058</code>) and use the search bar. Try:</p>
+    <ul>
+      <li>Searching for "apple"</li>
+      <li>Searching for a product that doesn't exist</li>
+      <li>Searching with an empty query</li>
+      <li>Searching for a single letter</li>
+      <li>Searching for a number</li>
+    </ul>
+    <p>Observe what happens in each case. <em>Think like QA — what should happen vs what does happen?</em></p>
+
+    <p class="task-label">STEP 2 — WRITE 4 ACCEPTANCE CRITERIA</p>
+    <p>Using the <strong>Given / When / Then</strong> format, write 4 acceptance criteria for OJS-5. Add them to the OJS-5 story in YouTrack (open it and add them to the description).</p>
+    <ul>
+      <li>AC1: What should happen with a valid search term that returns results?</li>
+      <li>AC2: What should happen when there are no matching results?</li>
+      <li>AC3: What should happen with an empty search?</li>
+      <li>AC4: One more edge case you spotted while exploring</li>
+    </ul>
+
+    <p class="task-label">STEP 3 — STANDUP PRACTICE</p>
+    <p>Write your standup update for today as if you were speaking in a real team meeting. Three sentences max:</p>
+    <ul>
+      <li><strong>Yesterday:</strong> What did you complete? (Lessons, test cases, bug reports)</li>
+      <li><strong>Today:</strong> What will you work on?</li>
+      <li><strong>Blockers:</strong> Anything stopping you?</li>
+    </ul>
+    <p>Post your standup and your 4 acceptance criteria here — I'll review both.</p>
+  </div>
+
+  <!-- Quiz -->
+  <div class="quiz">
+    <h2>Quick Check — 5 Questions</h2>
+    <p style="font-family:sans-serif;font-size:0.86rem;color:var(--muted);margin-bottom:1.25rem"></p>
+
+    <div class="question" id="q1">
+      <p>1. In Scrum, who is responsible for quality?</p>
+      <div class="options">
+        <label><input type="radio" name="q1" value="a"> Only the QA engineer</label>
+        <label><input type="radio" name="q1" value="b"> The Scrum Master</label>
+        <label><input type="radio" name="q1" value="c"> The entire Development Team, including QA and developers</label>
+        <label><input type="radio" name="q1" value="d"> The Product Owner</label>
+      </div>
+    </div>
+
+    <div class="question" id="q2">
+      <p>2. On your YouTrack board, which column is QA's primary queue — where you pick up work?</p>
+      <div class="options">
+        <label><input type="radio" name="q2" value="a"> In Progress</label>
+        <label><input type="radio" name="q2" value="b"> Ready for Review</label>
+        <label><input type="radio" name="q2" value="c"> Ready for Testing</label>
+        <label><input type="radio" name="q2" value="d"> Verified</label>
+      </div>
+    </div>
+
+    <div class="question" id="q3">
+      <p>3. A story is in the sprint and the developer says "it's done." What must happen before QA moves it to Verified?</p>
+      <div class="options">
+        <label><input type="radio" name="q3" value="a"> The Product Owner approves it</label>
+        <label><input type="radio" name="q3" value="b"> QA executes test cases, raises bugs, retests fixes, and confirms all acceptance criteria are met</label>
+        <label><input type="radio" name="q3" value="c"> The Scrum Master reviews the code</label>
+        <label><input type="radio" name="q3" value="d"> It passes unit tests</label>
+      </div>
+    </div>
+
+    <div class="question" id="q4">
+      <p>4. What is the purpose of a Daily Standup?</p>
+      <div class="options">
+        <label><input type="radio" name="q4" value="a"> A 1-hour detailed status meeting with management</label>
+        <label><input type="radio" name="q4" value="b"> A 15-minute daily sync where each person shares what they did, will do, and any blockers</label>
+        <label><input type="radio" name="q4" value="c"> A planning session for the next sprint</label>
+        <label><input type="radio" name="q4" value="d"> A meeting to review and close bugs</label>
+      </div>
+    </div>
+
+    <div class="question" id="q5">
+      <p>5. In Given/When/Then format, "Then" maps to which field in a test case?</p>
+      <div class="options">
+        <label><input type="radio" name="q5" value="a"> Preconditions</label>
+        <label><input type="radio" name="q5" value="b"> Test Steps</label>
+        <label><input type="radio" name="q5" value="c"> Expected Result</label>
+        <label><input type="radio" name="q5" value="d"> Test Data</label>
+      </div>
+    </div>
+
+    <button class="btn" onclick="checkQuiz()">Check My Answers</button>
+    <div class="quiz-result" id="quiz-result"></div>
+  </div>
+
+  <div class="callout teal">
+    <div class="callout-title">Where You Are Now</div>
+    <p>After this lesson you can speak confidently about Agile in any Junior QA interview. You're not just saying "I know Agile" — you have been living it: a real board, real user stories, real sprint workflow, real bugs. That is the difference between a candidate who read about Agile and one who has done it.</p>
+  </div>
+
+  <footer class="lesson-footer">
+    <div>
+      <div style="font-weight:700;margin-bottom:0.2rem">Questions?</div>
+      Ask: "What's the difference between a Sprint Review and a Retrospective?" or "What if a story isn't finished by end of sprint?"
+    </div>
+    <div>
+      <div style="font-weight:700;margin-bottom:0.4rem">After the exercise:</div>
+      <span style="background:var(--accent);color:#fff;padding:0.5rem 1rem;border-radius:6px;display:inline-block">→ Lesson 05: API Testing with Postman</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+const answers = { q1:'c', q2:'c', q3:'b', q4:'b', q5:'c' };
+function checkQuiz() {
+  let score = 0;
+  for (const [q, correct] of Object.entries(answers)) {
+    const selected = document.querySelector(`input[name="${q}"]:checked`);
+    document.querySelectorAll(`#${q} .options label`).forEach(label => {
+      const input = label.querySelector('input');
+      label.classList.remove('correct','wrong');
+      if (input.value === correct) label.classList.add('correct');
+      else if (selected && input.value === selected.value) label.classList.add('wrong');
+    });
+    if (selected && selected.value === correct) score++;
+  }
+  const r = document.getElementById('quiz-result');
+  r.style.display = 'block';
+  if (score === 5) { r.className='quiz-result pass'; r.textContent='Perfect — 5/5! Go write your acceptance criteria.'; }
+  else if (score >= 3) { r.className='quiz-result pass'; r.textContent=`${score}/5 — Good. Review the highlighted answers then start the exercise.`; }
+  else { r.className='quiz-result fail'; r.textContent=`${score}/5 — Re-read sections 3 and 5 before continuing.`; }
+}
+</script>
+</body>
+</html>

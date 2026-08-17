@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 07 — Interview Preparation</title>
+<style>
+  :root {
+    --bg: #f8f9fa; --surface: #ffffff; --surface2: #f1f3f5; --border: #dee2e6;
+    --text: #212529; --text2: #495057; --text3: #868e96;
+    --accent: #5c7cfa; --accent-soft: #e7ebff;
+    --green: #2f9e44; --green-soft: #d3f9d8;
+    --red: #c92a2a; --red-soft: #ffe3e3;
+    --orange: #e67700; --orange-soft: #fff3bf;
+    --purple: #7048e8; --purple-soft: #f3f0ff;
+    --teal: #0c8599; --teal-soft: #e3fafc;
+    --gold: #f59f00; --gold-soft: #fff9db;
+    --radius: 12px; --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1117; --surface: #1a1d2e; --surface2: #242736; --border: #2e3147;
+      --text: #e8eaf0; --text2: #a8adc0; --text3: #6b7090;
+      --accent: #748ffc; --accent-soft: #1e2456;
+      --green: #51cf66; --green-soft: #0d2e16;
+      --red: #ff6b6b; --red-soft: #2e0d0d;
+      --orange: #ffd43b; --orange-soft: #2e2200;
+      --purple: #9775fa; --purple-soft: #1e1640;
+      --teal: #22d3ee; --teal-soft: #0a2030;
+      --gold: #ffd43b; --gold-soft: #2a1f00;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f8f9fa; --surface: #ffffff; --surface2: #f1f3f5; --border: #dee2e6;
+    --text: #212529; --text2: #495057; --text3: #868e96;
+    --accent: #5c7cfa; --accent-soft: #e7ebff;
+    --green: #2f9e44; --green-soft: #d3f9d8;
+    --red: #c92a2a; --red-soft: #ffe3e3;
+    --orange: #e67700; --orange-soft: #fff3bf;
+    --purple: #7048e8; --purple-soft: #f3f0ff;
+    --teal: #0c8599; --teal-soft: #e3fafc;
+    --gold: #f59f00; --gold-soft: #fff9db;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1117; --surface: #1a1d2e; --surface2: #242736; --border: #2e3147;
+    --text: #e8eaf0; --text2: #a8adc0; --text3: #6b7090;
+    --accent: #748ffc; --accent-soft: #1e2456;
+    --green: #51cf66; --green-soft: #0d2e16;
+    --red: #ff6b6b; --red-soft: #2e0d0d;
+    --orange: #ffd43b; --orange-soft: #2e2200;
+    --purple: #9775fa; --purple-soft: #1e1640;
+    --teal: #22d3ee; --teal-soft: #0a2030;
+    --gold: #ffd43b; --gold-soft: #2a1f00;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  .hero { background: linear-gradient(135deg, #f59f00 0%, #e67700 100%); color: white; padding: 56px 24px; text-align: center; }
+  .hero .lesson-num { font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; margin-bottom: 12px; }
+  .hero h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 800; margin-bottom: 12px; }
+  .hero p { font-size: 17px; opacity: 0.9; max-width: 620px; margin: 0 auto 24px; }
+  .hero .pills { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .hero .pill { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35); border-radius: 999px; padding: 5px 14px; font-size: 13px; font-weight: 500; }
+
+  .progress-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 20px; }
+  .progress-bar .inner { max-width: 860px; margin: 0 auto; }
+  .progress-label { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .progress-track { background: var(--surface2); border-radius: 999px; height: 6px; }
+  .progress-fill { background: linear-gradient(90deg, #f59f00, #e67700); border-radius: 999px; height: 100%; width: 87.5%; }
+  .progress-steps { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; color: var(--text3); flex-wrap: wrap; gap: 4px; }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 20px 80px; }
+  section { margin-top: 44px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .section-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .section-icon.gold { background: var(--gold-soft); }
+  .section-icon.green { background: var(--green-soft); }
+  .section-icon.purple { background: var(--purple-soft); }
+  .section-icon.teal { background: var(--teal-soft); }
+  .section-icon.accent { background: var(--accent-soft); }
+  .section-icon.red { background: var(--red-soft); }
+  h2 { font-size: 22px; font-weight: 700; }
+  h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow); }
+
+  .callout { border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .callout.tip { background: var(--accent-soft); border-left: 4px solid var(--accent); }
+  .callout.gold { background: var(--gold-soft); border-left: 4px solid var(--gold); }
+  .callout.green { background: var(--green-soft); border-left: 4px solid var(--green); }
+  .callout.warning { background: var(--orange-soft); border-left: 4px solid var(--orange); }
+  .callout .c-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .callout.tip .c-label { color: var(--accent); }
+  .callout.gold .c-label { color: var(--gold); }
+  .callout.green .c-label { color: var(--green); }
+  .callout.warning .c-label { color: var(--orange); }
+  .callout p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+  /* Q&A cards */
+  .qa-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; box-shadow: var(--shadow); }
+  .qa-question { background: var(--surface2); padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+  .qa-question .q-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .qa-question .q-text { font-weight: 700; font-size: 15px; flex: 1; color: var(--text); }
+  .qa-question .q-toggle { font-size: 18px; color: var(--text3); flex-shrink: 0; transition: transform 0.2s; }
+  .qa-answer { padding: 20px; border-top: 1px solid var(--border); display: none; }
+  .qa-answer.open { display: block; }
+  .qa-answer .model-answer { background: var(--green-soft); border: 1px solid var(--green); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+  .qa-answer .model-answer .ma-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--green); margin-bottom: 8px; }
+  .qa-answer .model-answer p { font-size: 14px; color: var(--text); line-height: 1.7; font-style: italic; }
+  .qa-answer .why { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .qa-answer .why strong { color: var(--text); }
+
+  /* Your story */
+  .story-block { background: linear-gradient(135deg, var(--gold-soft) 0%, var(--accent-soft) 100%); border: 1px solid var(--gold); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+  .story-block .sb-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); margin-bottom: 10px; }
+  .story-block p { font-size: 15px; color: var(--text); line-height: 1.8; font-style: italic; }
+  .story-block .why-it-works { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .story-block .why-it-works .w-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 6px; }
+  .story-block .why-it-works ul { font-size: 13px; color: var(--text2); padding-left: 16px; }
+  .story-block .why-it-works li { margin-bottom: 4px; }
+
+  /* Tools grid */
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 16px; }
+  .tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .tool-card .t-icon { font-size: 24px; margin-bottom: 8px; }
+  .tool-card .t-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .tool-card .t-desc { font-size: 12px; color: var(--text3); margin-bottom: 8px; }
+  .tool-card .t-say { font-size: 12px; color: var(--text2); background: var(--surface2); border-radius: 6px; padding: 6px 8px; }
+  .tool-card .t-say strong { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text3); margin-bottom: 2px; }
+
+  /* Mock interview */
+  .mock-container { background: var(--surface); border: 2px solid var(--accent); border-radius: var(--radius); overflow: hidden; }
+  .mock-header { background: var(--accent); color: white; padding: 16px 20px; display: flex; align-items: center; gap: 10px; }
+  .mock-header .rec-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff4444; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .mock-header .title { font-weight: 700; font-size: 15px; }
+  .mock-body { padding: 24px; }
+  .mock-q { margin-bottom: 24px; }
+  .mock-q .interviewer { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .mock-q .avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .mock-q .avatar.interviewer-av { background: var(--surface2); border: 1px solid var(--border); }
+  .mock-q .bubble { background: var(--surface2); border-radius: 12px 12px 12px 0; padding: 12px 16px; font-size: 14px; font-weight: 600; max-width: 80%; }
+  .mock-q .reveal-btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+  .mock-q .reveal-btn:hover { opacity: 0.9; }
+  .mock-answer { background: var(--green-soft); border: 1px solid var(--green); border-radius: 12px; padding: 16px; margin-top: 10px; display: none; font-size: 14px; color: var(--text); line-height: 1.7; }
+  .mock-answer.show { display: block; }
+  .mock-answer .a-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--green); margin-bottom: 8px; }
+
+  /* Checklist */
+  .checklist { list-style: none; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li .check { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all 0.15s; }
+  .checklist li .check.checked { background: var(--green); border-color: var(--green); }
+  .checklist li .check.checked::after { content: '✓'; color: white; font-size: 12px; font-weight: 700; }
+  .checklist li .item-text { flex: 1; color: var(--text2); }
+  .checklist li .item-text strong { display: block; color: var(--text); margin-bottom: 2px; }
+
+  /* Questions to ask */
+  .ask-card { background: var(--purple-soft); border: 1px solid var(--purple); border-radius: var(--radius); padding: 20px; margin-bottom: 12px; }
+  .ask-card .ask-q { font-weight: 700; color: var(--purple); font-size: 15px; margin-bottom: 6px; }
+  .ask-card .ask-why { font-size: 13px; color: var(--text2); }
+
+  code { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-family: 'SF Mono', monospace; font-size: 12px; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; margin-right: 4px; }
+  .tag.real { background: var(--green-soft); color: var(--green); }
+  .tag.key { background: var(--gold-soft); color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="progress-bar">
+  <div class="inner">
+    <div class="progress-label">Course Progress</div>
+    <div class="progress-track"><div class="progress-fill"></div></div>
+    <div class="progress-steps">
+      <span>✅ L01</span><span>✅ L02</span><span>✅ L03</span><span>✅ L04</span>
+      <span>✅ L05</span><span>✅ L06</span><span style="color:var(--gold)"><strong>▶ L07</strong></span>
+      <span>L08</span>
+    </div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="lesson-num">Lesson 07</div>
+  <h1>Interview Preparation</h1>
+  <p>Everything you've learned, turned into answers you can say out loud with confidence. This is the lesson that gets you hired.</p>
+  <div class="pills">
+    <span class="pill">Your Story</span>
+    <span class="pill">12 Technical Questions</span>
+    <span class="pill">Behavioural Questions</span>
+    <span class="pill">Mock Interview</span>
+    <span class="pill">Questions to Ask Them</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- PART 1: YOUR STORY -->
+  <section>
+    <div class="section-header">
+      <div class="section-icon gold">👤</div>
+      <h2>Part 1 — Your Story</h2>
+    </div>
+
+    <div class="card">
+      <h3>The most important question: "Tell me about yourself"</h3>
+      <p style="font-size:14px;color:var(--text2);margin-bottom:16px;">This is always the first question. It sets the tone. Most career switchers get nervous here — don't. Your healthcare background is not a liability. It's a story that most QA candidates can't tell.</p>
+    </div>
+
+    <div class="story-block">
+      <div class="sb-label">Your model answer — say it out loud and make it yours</div>
+      <p>"I'm Shivani. I've spent the past year working as a Healthcare Support Worker at Royal Surrey County Hospital, and I hold a Master's degree in Dietetics and a Bachelor's in Science. Throughout my healthcare career, I've worked within strict clinical protocols, documented patient observations with precision, and escalated critical issues to the right people — which I've come to realise maps directly onto what QA engineers do every day.<br><br>
+      My husband is a Senior QA Analyst, which gave me an early insight into the profession. Over the past two months, I've been building practical skills: I've written test cases and bug reports in YouTrack, done API testing in Postman using the OWASP Juice Shop, and applied test design techniques like equivalence partitioning and boundary value analysis. I've also raised and tracked a critical security bug — an SQL injection vulnerability — using professional documentation standards.<br><br>
+      I'm now looking for a Junior QA role where I can bring both that systematic mindset from healthcare and the technical skills I've been building. Quality matters to me whether someone's health is at stake or someone's software is."</p>
+
+      <div class="why-it-works">
+        <div class="w-label">Why this works</div>
+        <ul>
+          <li>Opens with what you know, not what you don't have</li>
+          <li>Names specific tools: YouTrack, Postman, OWASP Juice Shop</li>
+          <li>Names specific techniques: EP, BVA</li>
+          <li>Names a real deliverable: SQL injection bug, critical severity</li>
+          <li>Ends with motivation — connects healthcare precision to QA precision</li>
+          <li>Doesn't apologise for the career switch — frames it as an asset</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout gold">
+      <div class="c-label">The career switch framing that works</div>
+      <p>If asked directly: <em>"In healthcare, I worked with clinical protocols, documented observations precisely, and flagged abnormal results — that's exactly what QA does: follow a process, document what you find, and escalate what matters. The domain changed, the discipline didn't."</em></p>
+    </div>
+  </section>
+
+  <!-- PART 2: TECHNICAL QUESTIONS -->
+  <section>
+    <div class="section-header">
+      <div class="section-icon accent">⚙️</div>
+      <h2>Part 2 — Technical Questions</h2>
+    </div>
+
+    <p style="font-size:14px;color:var(--text2);margin-bottom:20px;">Click each question to reveal the model answer. Read it, then close it and say the answer out loud in your own words. Your own words are better than memorised answers.</p>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">What is the difference between QA and QC?</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"QA — Quality Assurance — is proactive. It's about building quality into the process: reviewing requirements, writing acceptance criteria, joining sprint planning. QC — Quality Control — is reactive. It's about checking the product that's already been built: running test cases, executing test runs. Testing is a subset of QC. In practice, a QA engineer does both — we influence the process and verify the output."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> You define both, give the direction of each (proactive/reactive), and show you understand they're not the same job. Most junior candidates just say "QA finds bugs" — you're already ahead.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">What is a test case? Walk me through the anatomy of one.</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"A test case is a documented set of conditions and steps you execute to verify whether a feature works correctly. Every test case I write has: a unique ID, a descriptive title, any preconditions, specific test data, numbered steps, an expected result, and when run — the actual result and pass/fail status. For example, one of my test cases for the Juice Shop registration page is: ID OJS-44, title 'Verify error message when password is fewer than 5 characters', test data: password field with 4 characters, expected result: 'Password must be 5-40 characters long' error shown."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> You list all 7 fields from memory AND give a real example with an actual ID from your YouTrack. Interviewers love specificity.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">Describe the bug life cycle.</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"A bug starts as New when it's first raised. It gets Assigned to a developer, then moves to In Progress while they fix it. Once the fix is deployed to the test environment, QA picks it up for Retest. If it passes, it's Closed. If it fails — the bug is Reopened and goes back to the developer. There are also special states: Rejected means it's not actually a bug, Deferred means it's been pushed to a future sprint, and Duplicate means it's already been reported. I've followed this cycle in YouTrack — when I raised OJS-128, a critical SQL injection bug, I moved it through New and In Progress myself."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> Complete lifecycle, all special states included, and grounded in a real bug you raised. Mention OJS-128 whenever you can — it's your strongest evidence.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">What is the difference between severity and priority?</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"Severity is the technical impact of the bug — how badly it breaks the system. That's set by QA. Priority is how urgently the business needs it fixed — that's set by the Product Manager. They don't always match. For example, a broken company logo on the homepage might be low severity — the app still works — but high priority because of a live marketing campaign. Conversely, a bug in a rarely-used admin report might be high severity but low priority because it affects almost no users. The SQL injection bug I raised — OJS-128 — was Critical severity because it completely bypassed authentication."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> The logo example shows you understand the disconnect. Critical severity on OJS-128 shows you can apply it correctly.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">What is equivalence partitioning? Give me an example.</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"Equivalence partitioning is a test design technique where you divide all possible inputs into groups — partitions — that should behave identically. If one value in a group causes a bug, all values in that group will. So instead of testing every value, you test one representative from each group. For the Juice Shop registration password field, which accepts 5 to 40 characters, I identified three partitions: below minimum — invalid — represented by a 3-character password; within range — valid — represented by a 9-character password; and above maximum — invalid — represented by a 41-character password. That's three test cases instead of thousands."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> Definition, the logic behind it, and a real example from work you've actually done. The three partitions are named with actual values.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">What is boundary value analysis?</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"Boundary value analysis extends equivalence partitioning by testing at the edges between partitions. Developers make off-by-one errors very commonly — writing greater-than when they meant greater-than-or-equal — and those bugs appear exactly at the boundary. For the same password field with a minimum of 5 characters, I tested three boundary values: 4 characters, which should be rejected; 5 characters, which should be accepted — that's the most critical test, right at the boundary; and 6 characters, which should also be accepted. I verified all of these in Juice Shop directly."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> "Off-by-one" shows you understand WHY BVA exists. 4/5/6 chars are specific values. "Verified in Juice Shop" shows you actually did it, not just read about it.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">What is Agile? What is QA's role in a Scrum team?</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"Agile is an iterative development approach where work is delivered in short cycles called sprints — usually two weeks. Scrum is the most common Agile framework, and it has three roles: Product Owner, Scrum Master, and the Development Team, which QA is part of. QA gets involved from the start of each sprint: in Sprint Planning we review user stories and flag ambiguous requirements; in daily standups we give a brief update on what we tested yesterday, what we're testing today, and any blockers; in the Sprint Review we demonstrate tested features; and in the Retrospective we raise process improvements. QA picks up work when a user story reaches 'Ready for Testing' on the board, and we're the final gate before anything moves to Done."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> Names all Scrum ceremonies and QA's specific action in each one. "Final gate before Done" shows you understand the Definition of Done without them having to ask.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">What is API testing? Have you used Postman?</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"API testing means testing the application's backend directly — without going through the UI. You send HTTP requests and verify the responses: the status code, the response body, and the response time. I've used Postman to test the OWASP Juice Shop API. For example, I sent a GET request to the products endpoint and verified it returned 200 with 46 products. I sent a POST request to the login endpoint with valid credentials and verified I received a 200 with an authentication token in the body. And I sent the same POST with an incorrect password and verified I got a 401 Unauthorized with the message 'Invalid email or password'. I also tested a 404 scenario — requesting a product ID that doesn't exist — and confirmed the correct error response."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> You've described GET, POST, 200, 401, 404 with real examples. Most junior candidates say "I know what an API is" — you've actually done it.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">Tell me about a bug you found. Walk me through it.</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer — your strongest answer in the whole interview</div>
+          <p>"While testing the OWASP Juice Shop login page, I discovered that entering a single quote followed by SQL syntax in the email field — specifically the string <em>single-quote, space, OR, space, 1, equals, 1, dash, dash</em> — completely bypassed authentication and logged me straight into the admin account, even without knowing the password. I raised this as bug OJS-128 in YouTrack with Critical severity. My bug report included: the exact steps to reproduce, the expected result — that the login should fail and show an authentication error — and the actual result — that admin access was granted. I attached three screenshots as evidence, specified the environment — Juice Shop, Safari, macOS — and gave it a precise title: 'SQL injection in login email field bypasses authentication and grants admin account access.' This is a known attack type called SQL injection, and it's in the OWASP Top 10 most critical security vulnerabilities."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> This is your trump card. A Critical security bug, correctly documented, with all fields complete, OWASP Top 10 mentioned. Most Junior QA candidates have never raised a real security bug.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">What is the difference between smoke testing and regression testing?</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"Smoke testing is a quick, high-level check that the core functions of the application are working after a new build is deployed — before you invest time in full testing. If smoke fails, you send the build back immediately. Think of it as: does the app even start, can users log in, can they do the main thing? Regression testing is broader — it's verifying that existing functionality hasn't broken because of recent changes. After every new feature or bug fix, regression ensures nothing that used to work now fails. In healthcare terms: smoke testing is like checking a patient's vital signs on arrival before anything else; regression is the full review at the end of the ward round to make sure nothing changed unexpectedly."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> Clear distinction, real-world analogy, and the healthcare comparison shows you can contextualise concepts — always impressive in an interview.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">What is a decision table? When would you use one?</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"A decision table is used when a feature's outcome depends on multiple conditions combining together. You list the conditions as rows and the different combinations as columns — so for two binary conditions, you get four test cases. I used a decision table for the Juice Shop login form: two conditions — is the email registered, and is the password correct — giving four combinations. Only one combination produces a successful login: registered email plus correct password. The other three all produce the same error message: 'Invalid email or password.' Interestingly, the app deliberately doesn't tell you which thing was wrong — that's a security feature to prevent attackers from knowing which emails are registered. My decision table made that visible."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> Definition, when to use it, a real example, AND a security insight about why the error message is deliberately vague. That last point shows genuine thinking.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">What is acceptance criteria? How do you write it?</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"Acceptance criteria define the conditions a feature must meet to be considered done. They bridge the gap between a requirement and a test case — they're precise enough to test against but written in plain English. I write them in Given/When/Then format. For example, for the Juice Shop search feature: Given the user is on the Juice Shop homepage; When they type 'apple' in the search field; Then items containing the word apple should appear in the results, and items not containing 'apple' should not be visible. Acceptance criteria are written before development starts — ideally during Sprint Planning — so everyone agrees upfront what 'done' means."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> Given/When/Then format demonstrated with a real example, including the negative condition in the Then clause. "Before development starts" shows you understand when in the process ACs matter.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PART 3: BEHAVIOURAL -->
+  <section>
+    <div class="section-header">
+      <div class="section-icon purple">🧠</div>
+      <h2>Part 3 — Behavioural Questions</h2>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">Why do you want to move into QA?</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"In healthcare, I noticed I naturally gravitated towards the checking and verification side of work — making sure protocols were followed correctly, flagging when something didn't look right, documenting observations precisely. My husband is a Senior QA Analyst, which gave me a window into the profession, and I recognised that what I was already doing in clinical settings was essentially what QA engineers do in software. When I started learning formally — writing test cases, finding bugs, doing API testing — it confirmed that this is exactly where I want to be. QA lets me be the person whose job it is to think about what could go wrong before it does."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> The "I noticed I naturally..." framing shows authentic fit, not just career desperation. Ends with a memorable phrase about thinking ahead.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">Describe a time you caught an error before it became a problem.</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"In my healthcare role, I identified a documentation discrepancy in a patient's medication record during a routine check — the scheduled medication hadn't been signed off for a dose that should have been given. I flagged it to the nurse in charge before the next medication round, which meant it was corrected before any clinical decision was made on the basis of incorrect records. In my QA practice, the equivalent was finding the SQL injection vulnerability on the Juice Shop login page — a critical security flaw that, in a real application, would have allowed any attacker to access admin-level accounts. Both situations are about finding the problem before it reaches the user."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> Uses a healthcare story plus the SQL injection bug together. Shows the pattern of catching errors is consistent across both careers.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <div class="q-icon">Q</div>
+        <div class="q-text">Where do you see yourself in 2 years?</div>
+        <div class="q-toggle">▾</div>
+      </div>
+      <div class="qa-answer">
+        <div class="model-answer">
+          <div class="ma-label">Model answer</div>
+          <p>"In two years I'd like to be a confident, independent QA engineer — moving from having test cases reviewed to writing the test strategy for features myself. I'm particularly interested in developing further in API testing and security testing, given my background finding vulnerabilities. Longer term, I'm drawn to the idea of test automation — using tools like Selenium or Cypress to make regression testing more efficient. But right now, I want to build solid foundations in a team where I can learn from experienced QAs and contribute meaningfully."</p>
+        </div>
+        <div class="why"><strong>Why this works:</strong> Ambitious but realistic. Names automation tools (shows awareness of where the industry is going) without claiming you already know them. "Learn from experienced QAs" shows team-orientation.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PART 4: MOCK INTERVIEW -->
+  <section>
+    <div class="section-header">
+      <div class="section-icon red">🎙️</div>
+      <h2>Part 4 — Mock Interview</h2>
+    </div>
+
+    <p style="font-size:14px;color:var(--text2);margin-bottom:20px;">Read each question out loud. Pause. Answer it out loud in your own words — not from the screen. Then click to see the ideal answer and compare. Say it out loud is the key. Reading is not the same as speaking.</p>
+
+    <div class="mock-container">
+      <div class="mock-header">
+        <div class="rec-dot"></div>
+        <div class="title">Mock Interview — Junior QA Engineer Role</div>
+      </div>
+      <div class="mock-body">
+
+        <div class="mock-q">
+          <div class="interviewer">
+            <div class="avatar interviewer-av">👩‍💼</div>
+            <div class="bubble">"Thanks for coming in, Shivani. Can you tell me a little about yourself and why you're applying for this QA role?"</div>
+          </div>
+          <button class="reveal-btn" onclick="revealAnswer(this)">Show ideal answer</button>
+          <div class="mock-answer">
+            <div class="a-label">Ideal answer</div>
+            Use your "Tell me about yourself" answer from Part 1. Key points: healthcare background → systematic skills → QA study → YouTrack + Postman + Juice Shop → SQL injection bug → looking for a team to grow in. <strong>Say it conversationally, not like you're reading.</strong>
+          </div>
+        </div>
+
+        <div class="mock-q">
+          <div class="interviewer">
+            <div class="avatar interviewer-av">👩‍💼</div>
+            <div class="bubble">"What's the difference between severity and priority? Can you give me an example of a high-severity, low-priority bug?"</div>
+          </div>
+          <button class="reveal-btn" onclick="revealAnswer(this)">Show ideal answer</button>
+          <div class="mock-answer">
+            <div class="a-label">Ideal answer</div>
+            Severity = technical impact (set by QA). Priority = business urgency (set by PM). High severity, low priority example: a bug in an internal admin report that crashes the server — technically bad, but used by 2 people and not customer-facing, so the business may deprioritise it. Your OJS-128 was Critical severity AND high priority (security issue on the login page = customer-facing AND dangerous).
+          </div>
+        </div>
+
+        <div class="mock-q">
+          <div class="interviewer">
+            <div class="avatar interviewer-av">👩‍💼</div>
+            <div class="bubble">"I'm going to give you a registration form. Using test design techniques, how would you approach testing the password field?"</div>
+          </div>
+          <button class="reveal-btn" onclick="revealAnswer(this)">Show ideal answer</button>
+          <div class="mock-answer">
+            <div class="a-label">Ideal answer</div>
+            "I'd start with equivalence partitioning to identify the input groups: below minimum length (invalid), within range (valid), above maximum (invalid), empty (invalid), and passwords that don't match the confirm field (invalid). Then I'd apply boundary value analysis to the minimum and maximum: if minimum is 5 characters, I'd test 4, 5, and 6. If maximum is 40, I'd test 39, 40, and 41. That gives me comprehensive coverage with a small, focused set of test cases — rather than testing random values."
+          </div>
+        </div>
+
+        <div class="mock-q">
+          <div class="interviewer">
+            <div class="avatar interviewer-av">👩‍💼</div>
+            <div class="bubble">"We use Postman and REST APIs in this team. What's your experience?"</div>
+          </div>
+          <button class="reveal-btn" onclick="revealAnswer(this)">Show ideal answer</button>
+          <div class="mock-answer">
+            <div class="a-label">Ideal answer</div>
+            Describe your Postman work on Juice Shop specifically: GET /api/Products (200, 46 results), POST /rest/user/login with valid credentials (200, auth token received), same endpoint with wrong password (401, "Invalid email or password"), GET /api/Products/9999 (404 — resource doesn't exist). Explain you understand the difference between 401 (not authenticated) and 404 (resource doesn't exist). End with: "I understand API testing lets you test the backend independently of the UI, which catches bugs that a UI test might miss."
+          </div>
+        </div>
+
+        <div class="mock-q">
+          <div class="interviewer">
+            <div class="avatar interviewer-av">👩‍💼</div>
+            <div class="bubble">"What questions do you have for us?"</div>
+          </div>
+          <button class="reveal-btn" onclick="revealAnswer(this)">Show ideal answer</button>
+          <div class="mock-answer">
+            <div class="a-label">Ideal answer</div>
+            See Part 5 — Questions to Ask Them. Pick 2–3. Never say "I don't have any questions." That signals you're not genuinely interested.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PART 5: QUESTIONS TO ASK -->
+  <section>
+    <div class="section-header">
+      <div class="section-icon teal">❓</div>
+      <h2>Part 5 — Questions to Ask Them</h2>
+    </div>
+
+    <p style="font-size:14px;color:var(--text2);margin-bottom:20px;">Asking good questions shows you're evaluating them, not just hoping they'll hire you. Pick 2–3 from below.</p>
+
+    <div class="ask-card">
+      <div class="ask-q">"What does the QA process look like here — do you follow Scrum, and where does QA get involved in the sprint?"</div>
+      <div class="ask-why">Shows you understand Agile and you want to contribute early, not just at the end.</div>
+    </div>
+
+    <div class="ask-card">
+      <div class="ask-q">"What does the first 90 days look like for a Junior QA joining the team?"</div>
+      <div class="ask-why">Shows you're thinking about how to succeed in the role, not just getting the offer.</div>
+    </div>
+
+    <div class="ask-card">
+      <div class="ask-q">"What tools and tech stack does the QA team use — manual testing, automated, or both?"</div>
+      <div class="ask-why">Shows technical awareness and gives you insight into what you'd be learning.</div>
+    </div>
+
+    <div class="ask-card">
+      <div class="ask-q">"What does success look like for a Junior QA in the first 6 months?"</div>
+      <div class="ask-why">Directly useful information, and shows you're focused on performing well, not just joining.</div>
+    </div>
+
+    <div class="ask-card">
+      <div class="ask-q">"Is there much collaboration between QA and developers here, or does QA tend to work independently?"</div>
+      <div class="ask-why">Shows you understand team dynamics matter in Agile and you're thinking about how to work effectively.</div>
+    </div>
+  </section>
+
+  <!-- PART 6: TOOLS CHECKLIST -->
+  <section>
+    <div class="section-header">
+      <div class="section-icon green">🛠️</div>
+      <h2>Part 6 — Your Tools Profile</h2>
+    </div>
+
+    <p style="font-size:14px;color:var(--text2);margin-bottom:16px;">These are the tools you can mention with confidence because you've actually used them.</p>
+
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="t-icon">🐛</div>
+        <div class="t-name">YouTrack</div>
+        <div class="t-desc">Bug tracking & test management</div>
+        <div class="t-say"><strong>What to say</strong>I've used YouTrack to write and execute test cases in Test Manager, raise and track bugs through their lifecycle, and maintain the Agile board.</div>
+      </div>
+      <div class="tool-card">
+        <div class="t-icon">📮</div>
+        <div class="t-name">Postman</div>
+        <div class="t-desc">API testing</div>
+        <div class="t-say"><strong>What to say</strong>I've used Postman to send GET and POST requests, verify status codes, read JSON response bodies, and test both positive and negative scenarios.</div>
+      </div>
+      <div class="tool-card">
+        <div class="t-icon">🧃</div>
+        <div class="t-name">OWASP Juice Shop</div>
+        <div class="t-desc">Test application (real-world practice)</div>
+        <div class="t-say"><strong>What to say</strong>I used Juice Shop as my primary test target — writing test cases, raising bugs, doing API testing, and exploring security vulnerabilities.</div>
+      </div>
+      <div class="tool-card">
+        <div class="t-icon">🔷</div>
+        <div class="t-name">Agile / Scrum</div>
+        <div class="t-desc">Methodology</div>
+        <div class="t-say"><strong>What to say</strong>I understand sprint ceremonies, have written acceptance criteria in Given/When/Then format, and understand QA's role at each stage of the sprint.</div>
+      </div>
+    </div>
+
+    <div class="callout warning" style="margin-top:20px;">
+      <div class="c-label">Honest framing for tools you know exist but haven't used</div>
+      <p>If asked about JIRA: <em>"I've used YouTrack which is similar in concept — Agile boards, issue tracking, test management. I'd expect to pick up JIRA quickly."</em> Never claim tools you haven't touched. Interviewers sometimes ask follow-up questions and it becomes obvious immediately.</p>
+    </div>
+  </section>
+
+  <!-- FINAL CHECKLIST -->
+  <section>
+    <div class="section-header">
+      <div class="section-icon gold">✅</div>
+      <h2>Interview Day Checklist</h2>
+    </div>
+
+    <div class="card">
+      <ul class="checklist" id="checklist">
+        <li><div class="check" onclick="toggleCheck(this)"></div><div class="item-text"><strong>Practice your "Tell me about yourself" answer out loud</strong>Until you can say it without hesitation — aim for 90 seconds</div></li>
+        <li><div class="check" onclick="toggleCheck(this)"></div><div class="item-text"><strong>Review OJS-128 details</strong>SQL injection, Critical severity, steps, expected vs actual, 3 screenshots, environment</div></li>
+        <li><div class="check" onclick="toggleCheck(this)"></div><div class="item-text"><strong>Know your BVA values</strong>4 chars (invalid), 5 chars (valid), 6 chars (valid) — and why</div></li>
+        <li><div class="check" onclick="toggleCheck(this)"></div><div class="item-text"><strong>Know your status codes</strong>200, 201, 400, 401, 403, 404, 500 — and what each means</div></li>
+        <li><div class="check" onclick="toggleCheck(this)"></div><div class="item-text"><strong>Prepare 2–3 questions to ask them</strong>From Part 5 above</div></li>
+        <li><div class="check" onclick="toggleCheck(this)"></div><div class="item-text"><strong>Do the mock interview out loud</strong>Not just read it — say the answers to a wall, a mirror, or Khushal</div></li>
+        <li><div class="check" onclick="toggleCheck(this)"></div><div class="item-text"><strong>Sleep the night before</strong>Clinical protocols apply here too — you perform better rested</div></li>
+      </ul>
+    </div>
+
+    <div class="callout green">
+      <div class="c-label">You are ready</div>
+      <p>You've raised a Critical security bug. You've written test cases with real test data in a real test management tool. You've done API testing in Postman. You've applied ISTQB-standard techniques — EP, BVA, decision tables — to a real application. You've run sprints, written acceptance criteria, done standups. Most Junior QA candidates applying for the same roles have read about these things. You've done them. That's the difference.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function toggle(el) {
+  const answer = el.parentElement.querySelector('.qa-answer');
+  const arrow = el.querySelector('.q-toggle');
+  answer.classList.toggle('open');
+  arrow.textContent = answer.classList.contains('open') ? '▴' : '▾';
+}
+
+function revealAnswer(btn) {
+  const answer = btn.nextElementSibling;
+  answer.classList.add('show');
+  btn.style.display = 'none';
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+}
+</script>
+</body>
+</html>
